@@ -1,0 +1,40 @@
+@inject Services.ComicService ComicService;
+<div class="side-panel">
+    Sideview
+<div class="page-list">
+    @foreach (var p in ComicService.Pages)
+    {
+        @if (p.PageType == PageType.FrontCover)
+        {
+            <div class="page spacer"></div>
+        }
+
+        <div class="page @p.PageClass">
+            @if (p.BlobUri != null)
+            {
+                <img style="object-fit: cover; height: 100%;" src="@p.BlobUri" />
+            }
+            else
+            {
+                <div class="dummy-img" style="object-fit: cover; height: 100%;" ></div>
+            }
+            <div>@p.RealPageNumberString
+
+            </div>
+            @* <div>@p.DoublePage - @p.ImageWidth x @p.ImageHeight</div> *@
+        </div>
+
+
+
+    
+    }
+</div>
+</div>
+
+@code
+{
+    protected override async Task OnInitializedAsync()
+    {
+        ComicService.PagesChanged += () => StateHasChanged();
+    }
+}

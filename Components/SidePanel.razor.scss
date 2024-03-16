@@ -1,0 +1,27 @@
+.side-panel{
+    height: calc(100svh - 20px);
+    overflow: hidden;
+    overflow-y: auto;
+
+}
+.page-list{
+    width: 170px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+.page{
+    min-height:122px;
+    width: 80px;
+    background-color: #e8e6f9;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    &.spacer{
+        background-color: unset;
+    }
+    &.double-page{
+        width: 160px;
+    }
+}
+}

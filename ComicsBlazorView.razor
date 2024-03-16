@@ -1,0 +1,53 @@
+@inject Services.BlobManagerService BlobManagerService;
+@inject Services.ComicService ComicService;
+@using ComicsBlazor.Components
+@using Microsoft.AspNetCore.Components.Web
+
+<Progress />
+<Title />
+<div class="d-flex flex-row">
+<SidePanel />
+<PageView />
+</div>
+
+
+
+<HeadContent>
+    <link href="_content/ComicsBlazor/default.css" rel="stylesheet" />
+</HeadContent>
+
+
+
+@code {
+
+    [Parameter] public string Url { get; set; } = string.Empty;
+    [Parameter] public string? Name { get; set; } = string.Empty;
+    [Parameter] public ComicMetadata Metadata { get; set; } = null!;
+
+    [Parameter] public Func<int, Task<PageData?>> GetPage { get; set; } = null!;
+
+
+
+    private string BlobUrl = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        ComicService.GetPage = GetPage;
+        ComicService.Init(Metadata);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Console.WriteLine("Comics Loaded");
+            ComicService.CurrentPage = 9;
+
+            @* await ComicService.LoadAtPosition(); *@
+
+        }
+    }
+
+
+
+}

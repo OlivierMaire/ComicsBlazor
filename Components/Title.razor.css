@@ -1,0 +1,10 @@
+.title {
+  background-color: #e8e6f9;
+  text-align: center;
+  height: 16px;
+  line-height: 16px;
+  font-size: 0.8rem;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}

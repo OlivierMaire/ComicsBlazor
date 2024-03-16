@@ -1,0 +1,18 @@
+@inject Services.ComicService ComicService;
+
+
+<div class="comic-progress" style="--page-nb: @ComicService.Pages.Count">
+    @foreach (var p in ComicService.Pages)
+    {
+        <div class="page @(p.BlobUri != null? "loaded" : "")" @onclick="() => ComicService.GoToPage(p)"></div>
+    }
+</div>
+
+
+@code
+{
+    protected override async Task OnInitializedAsync()
+    {
+        ComicService.PagesChanged += () => StateHasChanged();
+    }
+}

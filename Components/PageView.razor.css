@@ -1,0 +1,16 @@
+.page-view {
+  display: flex;
+  flex-direction: row;
+}
+.page-view .page-area {
+  display: flex;
+  flex-direction: row;
+}
+.page-view .page-area .left-page,
+.page-view .page-area .right-page {
+  height: calc(100svh - 20px);
+}
+.page-view .page-area .left-page img,
+.page-view .page-area .right-page img {
+  height: 100%;
+}

@@ -1,0 +1,46 @@
+<div class="page-view">
+    <div @onclick="@(() => ComicService.MoveBack())">Prev
+
+        Current page @ComicService.CurrentPage
+    </div>
+    <div class="page-area">
+        <div class="left-page">
+            <img src="@LeftPage?.BlobUri" />
+        </div>
+        @if (ComicService.DisplayMode == DisplayMode.DoublePage)
+        {
+            <div class="right-page">
+                <img src="@RightPage?.BlobUri" />
+            </div>
+        }
+
+    </div>
+    <div @onclick="@(() => ComicService.MoveNext())">Next
+        page count @ComicService.Pages.Count
+
+
+    </div>
+</div>
+
+@code {
+    private Page? LeftPage { get; set; }
+    private Page? RightPage { get; set; }
+
+    protected override void OnInitialized()
+    {
+        ComicService.CurrentPageChanged += () => OnCurrentPageChanged();
+    }
+
+    public void OnCurrentPageChanged()
+    {
+        LeftPage = ComicService.Pages[ComicService.CurrentPage];
+        if (ComicService.DisplayMode == DisplayMode.DoublePage && ComicService.CurrentPage + 1 < ComicService.Pages.Count &&
+        !(LeftPage.DoublePage || LeftPage.PageType == PageType.FrontCover || ComicService.Pages[ComicService.CurrentPage +
+        1].DoublePage))
+            RightPage = ComicService.Pages[ComicService.CurrentPage + 1];
+        else
+            RightPage = null;
+
+        StateHasChanged();
+    }
+}

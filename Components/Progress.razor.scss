@@ -1,0 +1,19 @@
+.comic-progress{
+    height: 4px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    .page {
+        opacity: .5;
+        width: 100%;
+        background-color: rgb(118,106,231);
+        &.loaded{
+            background-color: rgba(89,74,226,1);
+            opacity: .6;
+        }
+        &:hover{
+            opacity: .8;
+        }
+
+    }
+}

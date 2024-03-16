@@ -1,0 +1,11 @@
+@inject Services.ComicService ComicService;
+<div class="title noto-sans">
+    @ComicService.Title
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        ComicService.TitleChanged += () => StateHasChanged();
+    }
+}
