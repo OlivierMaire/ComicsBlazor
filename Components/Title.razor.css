@@ -1,5 +1,20 @@
-.title {
-  background-color: #e8e6f9;
+.title-wrap {
+  display: flex;
+  background-color: var(--bg-panel);
+}
+.title-wrap .sidebar-open-icon, .title-wrap .sidebar-close-icon {
+  width: 20px;
+  height: 16px;
+  margin-right: 4px;
+  padding-left: 4px;
+  opacity: 0.6;
+  transition: opacity linear 0.2s;
+}
+.title-wrap .sidebar-open-icon:hover, .title-wrap .sidebar-close-icon:hover {
+  opacity: 1;
+}
+.title-wrap .title {
+  flex-grow: 1;
   text-align: center;
   height: 16px;
   line-height: 16px;

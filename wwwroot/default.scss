@@ -1,10 +1,53 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Mono:wdth@87.5&display=swap');
 
+:root {
+  --purple-light: #e8e6f9;
+  --purple-light-shade: #b8b6c4;
+
+  --purple-bright: #bbb5f0;
+  --purple-bright-shade: #9d93eb;
+  --purple-bright-highlight: #7c70e4;
+
+  --bg-panel: var(--purple-light);
+
+  --side-panel-width: 180px;
+  --side-panel-translate: 180px;
+
+}
+
+.side-panel:has(+ div .sidebar-open-icon) {
+  // --side-panel-width: 0;
+  transform: translateX(calc(-1 * var(--side-panel-translate)));
+}
+
+.main-view:has(.sidebar-open-icon) {
+  --side-panel-width: 0;
+  transition: margin-left 0.5s linear;
+}  
+
+.main-view{
+  margin-left: var(--side-panel-width);
+  // transition: width linear .5s;
+  transition: margin-left 0.5s linear;
+}
+
 .noto-sans {
-    font-family: "Noto Sans Mono", monospace;
-    font-optical-sizing: auto;
-    font-weight: 400;
-    font-style: normal;
-    font-variation-settings:
-      "wdth" 87.5;
+  font-family: "Noto Sans Mono", monospace;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings:
+    "wdth" 87.5;
+}
+
+.sidebar-close-icon {
+  &:before {
+    content: url('data:image/svg+xml;utf8,<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 800 800" xml:space="preserve"><style type="text/css">.st0{fill-rule:evenodd;clip-rule:evenodd;fill:%237c70e4;}</style><path class="st0" d="M331.5,75c-10.5,0-20.6,0-30.3,0c-0.4,0-0.8,0-1.1,0c-0.4,0-0.9,0-1.3,0c-46.1,0.1-84.1,0.9-115,5.1		C144.6,85.4,113,96.4,88,121.4C63.1,146.3,52,178,46.8,217c-5.1,38-5.1,86.5-5.1,147.8v70.4c0,61.3,0,109.8,5.1,147.8		C52,622,63.1,653.7,88,678.6c24.9,24.9,56.6,36,95.7,41.3c30.9,4.2,68.9,4.9,115,5.1c0.4,0,0.9,0,1.3,0c0.4,0,0.8,0,1.1,0		c9.7,0,19.8,0,30.3,0h137.1c61.3,0,109.8,0,147.8-5.1c39.1-5.3,70.7-16.3,95.7-41.3c24.9-24.9,36-56.6,41.3-95.7		c5.1-38,5.1-86.5,5.1-147.8v-70.4c0-61.3,0-109.8-5.1-147.8c-5.3-39.1-16.3-70.7-41.3-95.7c-24.9-24.9-56.6-36-95.7-41.3		c-38-5.1-86.5-5.1-147.8-5.1H331.5z M325,675c2.7,0,5.5,0,8.3,0h133.3c63.6,0,108.7-0.1,143-4.7c33.5-4.5,52.9-13,67-27.1		c14.1-14.1,22.6-33.4,27.1-67c4.6-34.3,4.7-79.4,4.7-143v-66.7c0-63.6-0.1-108.7-4.7-143c-4.5-33.5-13-52.9-27.1-67		c-14.1-14.1-33.4-22.6-67-27.1c-34.3-4.6-79.4-4.7-143-4.7H333.3c-2.8,0-5.6,0-8.3,0V675z M275,125.2c-34.5,0.4-61.9,1.4-84.6,4.5		c-33.5,4.5-52.9,13-67,27.1c-14.1,14.1-22.6,33.4-27.1,67c-4.6,34.3-4.7,79.4-4.7,143v66.7c0,63.6,0.1,108.7,4.7,143		c4.5,33.5,13,52.9,27.1,67c14.1,14.1,33.4,22.6,67,27.1c22.7,3.1,50.2,4.1,84.6,4.5V125.2z"/><path class="st0" d="M467.7,282.3c9.8,9.8,9.8,25.6,0,35.4L385.4,400l82.3,82.3c9.8,9.8,9.8,25.6,0,35.4c-9.8,9.8-25.6,9.8-35.4,0	l-100-100c-9.8-9.8-9.8-25.6,0-35.4l100-100C442.1,272.6,457.9,272.6,467.7,282.3z"/></svg>');
   }
+}
+
+.sidebar-open-icon {
+  &:before {
+    content: url('data:image/svg+xml;utf8,<svg version="1.1"  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 800 800" xml:space="preserve"><style type="text/css">.st0{fill-rule:evenodd;clip-rule:evenodd;fill:%237c70e4;}</style><path class="st0" d="M331.5,75c-10.5,0-20.6,0-30.3,0c-0.4,0-0.8,0-1.1,0c-0.4,0-0.9,0-1.3,0c-46.1,0.1-84.1,0.9-115,5.1		C144.6,85.4,113,96.4,88,121.4C63.1,146.3,52,178,46.8,217c-5.1,38-5.1,86.5-5.1,147.8v70.4c0,61.3,0,109.8,5.1,147.8		C52,622,63.1,653.7,88,678.6c24.9,24.9,56.6,36,95.7,41.3c30.9,4.2,68.9,4.9,115,5.1c0.4,0,0.9,0,1.3,0c0.4,0,0.8,0,1.1,0		c9.7,0,19.8,0,30.3,0h137.1c61.3,0,109.8,0,147.8-5.1c39.1-5.3,70.7-16.3,95.7-41.3c24.9-24.9,36-56.6,41.3-95.7		c5.1-38,5.1-86.5,5.1-147.8v-70.4c0-61.3,0-109.8-5.1-147.8c-5.3-39.1-16.3-70.7-41.3-95.7c-24.9-24.9-56.6-36-95.7-41.3		c-38-5.1-86.5-5.1-147.8-5.1H331.5z M325,675c2.7,0,5.5,0,8.3,0h133.3c63.6,0,108.7-0.1,143-4.7c33.5-4.5,52.9-13,67-27.1		c14.1-14.1,22.6-33.4,27.1-67c4.6-34.3,4.7-79.4,4.7-143v-66.7c0-63.6-0.1-108.7-4.7-143c-4.5-33.5-13-52.9-27.1-67		c-14.1-14.1-33.4-22.6-67-27.1c-34.3-4.6-79.4-4.7-143-4.7H333.3c-2.8,0-5.6,0-8.3,0V675z M275,125.2c-34.5,0.4-61.9,1.4-84.6,4.5		c-33.5,4.5-52.9,13-67,27.1c-14.1,14.1-22.6,33.4-27.1,67c-4.6,34.3-4.7,79.4-4.7,143v66.7c0,63.6,0.1,108.7,4.7,143		c4.5,33.5,13,52.9,27.1,67c14.1,14.1,33.4,22.6,67,27.1c22.7,3.1,50.2,4.1,84.6,4.5V125.2z"/></svg>');
+  }
+}

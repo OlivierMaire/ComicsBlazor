@@ -63,8 +63,17 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
     public async Task InitInteropAsync()
     {
         interopService.OnWindowResized += WindowResized;
+        interopService.OnKeyDown += KeyDown;
         await interopService.Init();
 
+    }
+
+    private void KeyDown(string key)
+    {
+        if (key == "ArrowLeft")
+            MoveBack();
+        else if (key == "ArrowRight")
+            MoveNext();
     }
 
     private void WindowResized(Size size)
@@ -77,11 +86,9 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
         {
             var ratio = (size.Height - 20) / (double?)page.ImageHeight;
             var limitWidth = page.ImageWidth * ratio;
-            Console.WriteLine($"limitWidth: {size.Height}x{limitWidth}");
 
             if (size.Width < limitWidth * 2) // can't fit 2 pages
                 calculatedDisplayMode = DisplayMode.SinglePage;
-
         }
 
 
@@ -94,7 +101,6 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
                 {
                     CurrentPage--;
                 }
-
             }
 
             _forcedDisplayMode = calculatedDisplayMode;
@@ -126,6 +132,8 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
                     page.ImageHeight = (uint)sourceBitmap.Height;
                     page.DoublePage = page.ImageWidth > page.ImageHeight;
 
+                    (page.ColorLeft, page.ColorRight) = GetMainColorFromLeftStrip(sourceBitmap);
+
                     if (page.DoublePage)
                         RecalculatePageNumbers();
                 }
@@ -138,6 +146,50 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
             Console.WriteLine("GetPage function not provided");
         }
         return page;
+    }
+
+    private (string, string) GetMainColorFromLeftStrip(SKBitmap bitmap)
+    {
+        Dictionary<SKColor, int> colorOccurrencesLeft = new Dictionary<SKColor, int>();
+        Dictionary<SKColor, int> colorOccurrencesRight = new Dictionary<SKColor, int>();
+
+        // Loop through the first 10 pixels from the left side of the image
+        for (int y = 0; y < bitmap.Height; y++)
+        {
+            for (int x = 0; x < 10; x++)
+            {
+                SKColor currentColor = bitmap.GetPixel(x, y);
+
+                if (colorOccurrencesLeft.ContainsKey(currentColor))
+                {
+                    colorOccurrencesLeft[currentColor]++;
+                }
+                else
+                {
+                    colorOccurrencesLeft[currentColor] = 1;
+                }
+            }
+
+            for (int x = bitmap.Width - 1; x >= bitmap.Width - 10; x--)
+            {
+                SKColor currentColor = bitmap.GetPixel(x, y);
+
+                if (colorOccurrencesRight.ContainsKey(currentColor))
+                {
+                    colorOccurrencesRight[currentColor]++;
+                }
+                else
+                {
+                    colorOccurrencesRight[currentColor] = 1;
+                }
+            }
+        }
+
+        // Find the most frequent color
+        var mainColorLeft = colorOccurrencesLeft.OrderByDescending(c => c.Value).First().Key;
+        var mainColorRight = colorOccurrencesRight.OrderByDescending(c => c.Value).First().Key;
+
+        return ($"#{mainColorLeft.Red:X2}{mainColorLeft.Green:X2}{mainColorLeft.Blue:X2}", $"#{mainColorRight.Red:X2}{mainColorRight.Green:X2}{mainColorRight.Blue:X2}");
     }
 
     private void RecalculatePageNumbers()
@@ -171,6 +223,13 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
             await this.LoadPage(CurrentPage + 2);
         if (CurrentPage - 2 >= 0 && Pages[CurrentPage - 2].BlobUri == null)
             await this.LoadPage(CurrentPage - 2);
+        if (DisplayMode == DisplayMode.DoublePage)
+        {
+            // load 1 more page
+            if (CurrentPage + 3 < Pages.Count && Pages[CurrentPage + 3].BlobUri == null)
+                await this.LoadPage(CurrentPage + 3);
+
+        }
     }
 
     public void GoToPage(Page page)
@@ -290,12 +349,17 @@ public class Page : ComicMetadata.PageInfo
     {
         PageType.FrontCover => " front-cover",
         _ => ""
-    } + (this.DoublePage ? " double-page" : "");
+    }
+    + (this.DoublePage ? " double-page" : "")
+    + (this.RealPageNumber % 2 == 0 ? " even" : " odd")
+    + (this.BlobUri != null ? " loaded" : "");
 
 
     public int? RealPageNumber { get; set; }
     public string RealPageNumberString => DoublePage ? (RealPageNumber != null ? $"{RealPageNumber} - {RealPageNumber + 1}" : "") : RealPageNumber.ToString() ?? string.Empty;
 
+    public string ColorLeft { get; internal set; }
+    public string ColorRight { get; internal set; }
 }
 
 public enum DisplayMode

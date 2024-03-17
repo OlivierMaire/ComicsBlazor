@@ -1,12 +1,27 @@
+.title-wrap {
+    display: flex;
+    background-color: var(--bg-panel);
 
-.title{
-    background-color: #e8e6f9;
-    text-align: center;
-    height: 16px;
-    line-height: 16px;
-    font-size: .8rem;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
+    .sidebar-open-icon,.sidebar-close-icon{
+        width: 20px;
+        height: 16px;
+        margin-right: 4px;
+        padding-left: 4px;
+        opacity: .6;
+        transition: opacity linear .2s;
+        &:hover{
+            opacity: 1;
+        }
+    }
+
+    .title {
+        flex-grow: 1;
+        text-align: center;
+        height: 16px;
+        line-height: 16px;
+        font-size: .8rem;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
 }
-

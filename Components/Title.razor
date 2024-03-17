@@ -1,11 +1,22 @@
 @inject Services.ComicService ComicService;
-<div class="title noto-sans">
-    @ComicService.Title
+<div class="title-wrap">
+    <div class="@SidebarIcon" @onclick="ToggleSidebar"></div>
+    <div class="title noto-sans">
+        @ComicService.Title
+    </div>
 </div>
 
 @code {
+
+    private string SidebarIcon {get;set;}= "sidebar-open-icon" ;
     protected override void OnInitialized()
     {
         ComicService.TitleChanged += () => StateHasChanged();
+    }
+
+    private void ToggleSidebar()
+    {
+        SidebarIcon = SidebarIcon == "sidebar-close-icon" ? "sidebar-open-icon" : "sidebar-close-icon";
+        @* StateHasChanged(); *@
     }
 }

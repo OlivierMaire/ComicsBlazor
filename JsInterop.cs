@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 
 namespace ComicsBlazor;
@@ -13,7 +14,8 @@ namespace ComicsBlazor;
 
 public class ComicsJsInterop : IAsyncDisposable
 {
-    public Action<Size>? OnWindowResized {get;set;}
+    public Action<Size>? OnWindowResized { get; set; }
+    public Action<string>? OnKeyDown { get; set; }
 
     private readonly Lazy<Task<IJSObjectReference>> moduleTask;
 
@@ -46,9 +48,17 @@ public class ComicsJsInterop : IAsyncDisposable
         }
     }
 
-    [JSInvokableAttribute("OnResizeFromJs")]
+    [JSInvokable("OnResizeFromJs")]
     public void OnResizeFromJs(int width, int height)
     {
         OnWindowResized?.Invoke(new Size(width, height));
+    }
+
+    [JSInvokable("JsKeyDown")]
+    public void JsKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "ArrowLeft" || e.Key == "ArrowRight")
+            OnKeyDown?.Invoke(e.Key);
+
     }
 }

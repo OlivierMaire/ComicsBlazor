@@ -2,26 +2,129 @@
   height: 100svh;
   overflow: hidden;
   overflow-y: auto;
-  width: 170px;
+  width: var(--side-panel-width);
+  background-color: var(--bg-panel);
+  scrollbar-color: var(--purple-light-shade) var(--bg-panel);
+  scrollbar-width: thin;
+  position: fixed;
+  z-index: 2;
+  transition: transform 0.5s linear;
 }
-
-.page-list {
-  width: 170px;
+.side-panel .page-list {
+  margin-top: 20px;
+  --border-width: 4px;
+  width: calc(var(--side-panel-width) - var(--border-width) * 2);
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  justify-content: center;
 }
-.page-list .page {
-  min-height: 122px;
-  width: 80px;
-  background-color: #e8e6f9;
+.side-panel .page-list .page {
+  width: calc(var(--side-panel-width) / 2 - var(--border-width) - 0.4rem - 5px);
+  height: calc((var(--side-panel-width) / 2 - var(--border-width) - 0.4rem - 5px) / 0.65);
   display: flex;
   flex-direction: column;
   text-align: center;
+  margin: 0.2rem;
+  border: solid var(--border-width) var(--purple-light-shade);
+  position: relative;
+  cursor: pointer;
 }
-.page-list .page.spacer {
+.side-panel .page-list .page .page-number {
+  background-color: var(--purple-light-shade);
+  position: absolute;
+  bottom: 0;
+  padding: 0 2px;
+}
+.side-panel .page-list .page.odd .page-number {
+  right: 0;
+  padding-right: 4px;
+}
+.side-panel .page-list .page.even .page-number {
+  left: 0;
+  padding-left: 4px;
+}
+.side-panel .page-list .page.double-page .page-number {
+  left: 50%;
+  padding: 0 2px;
+  width: -moz-fit-content;
+  width: fit-content;
+  transform: translateX(-50%);
+}
+.side-panel .page-list .page.spacer {
   background-color: unset;
+  border: none;
 }
-.page-list .page.double-page {
-  width: 160px;
+.side-panel .page-list .page.loaded {
+  border-color: var(--purple-bright);
+}
+.side-panel .page-list .page.loaded .page-number {
+  background-color: var(--purple-bright);
+}
+.side-panel .page-list .page.active {
+  border-color: var(--purple-bright-shade);
+}
+.side-panel .page-list .page.active .page-number {
+  background-color: var(--purple-bright-shade);
+}
+.side-panel .page-list .page.odd:hover, .side-panel .page-list .page.even:hover {
+  border-color: var(--purple-bright-highlight);
+}
+.side-panel .page-list .page.odd:hover .page-number, .side-panel .page-list .page.even:hover .page-number {
+  background-color: var(--purple-bright-highlight);
+}
+.side-panel .page-list .page.double-page {
+  width: calc(var(--side-panel-width) - var(--border-width) * 2 - 0.4rem - 10px);
+}
+.side-panel .page-list .page img {
+  flex-grow: 1;
+  -o-object-fit: cover;
+     object-fit: cover;
+  height: 100%;
+}
+.side-panel .page-list .page .dummy-img {
+  align-self: center;
+  width: 50%;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+}
+.side-panel .page-list .page .dummy-img svg {
+  fill: var(--purple-light-shade);
+}
+.side-panel.DoublePage .page {
+  margin-left: 0;
+  margin-right: 0;
+  width: calc(var(--side-panel-width) / 2 - var(--border-width) - 5px);
+  height: calc((var(--side-panel-width) / 2 - var(--border-width) - 5px) / 0.65);
+}
+.side-panel.DoublePage .page.even {
+  border-left: none;
+}
+.side-panel.DoublePage .page.odd {
+  border-right: none;
+}
+.side-panel.DoublePage .page.double-page, .side-panel.DoublePage .page.front-cover {
+  border: solid var(--border-width) var(--purple-light-shade);
+}
+.side-panel.DoublePage .page.loaded:not(.active):not(:hover) {
+  border-color: var(--purple-bright);
+}
+.side-panel.DoublePage .page.loaded:not(.active):not(:hover) .page-number {
+  background-color: var(--purple-bright);
+}
+.side-panel.DoublePage .page.double-page {
+  width: calc(var(--side-panel-width) - var(--border-width) * 2 - 10px);
+}
+.side-panel.DoublePage .page.active + .page.even:not(:hover) {
+  border-color: var(--purple-bright-shade);
+}
+.side-panel.DoublePage .page.active + .page.even:not(:hover) .page-number {
+  background-color: var(--purple-bright-shade);
+}
+.side-panel.DoublePage .page.odd:hover + .page.even, .side-panel.DoublePage .page.odd:has(+ .even:hover) {
+  border-color: var(--purple-bright-highlight) !important;
+}
+.side-panel.DoublePage .page.odd:hover + .page.even .page-number, .side-panel.DoublePage .page.odd:has(+ .even:hover) .page-number {
+  background-color: var(--purple-bright-highlight) !important;
 }

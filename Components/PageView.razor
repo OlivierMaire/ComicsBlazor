@@ -1,13 +1,20 @@
+@using Microsoft.AspNetCore.Components.Web
+
 <div class="page-view">
     <div class="left-icon" @onclick="@(() => ComicService.MoveBack())"></div>
     <div class="page-area">
-        <div class="left-page">
+        <div class="left-page" style="background: @LeftColor;">
             <img src="@LeftPage?.BlobUri" />
+            @if (ComicService.DisplayMode == DisplayMode.DoublePage && !(LeftPage?.DoublePage ?? false))
+            {
+                <div class="left-shadow"></div>
+            }
         </div>
-        @if (ComicService.DisplayMode == DisplayMode.DoublePage)
+        @if (ComicService.DisplayMode == DisplayMode.DoublePage && RightPage != null)
         {
-            <div class="right-page">
+            <div class="right-page" style="background: @RightColor;">
                 <img src="@RightPage?.BlobUri" />
+                <div class="right-shadow"></div>
             </div>
         }
 
@@ -19,24 +26,41 @@
     private Page? LeftPage { get; set; }
     private Page? RightPage { get; set; }
 
+    public string LeftColor { get; set; } = string.Empty;
+    public string RightColor { get; set; } = string.Empty;
+
     protected override void OnInitialized()
     {
         ComicService.CurrentPageChanged += () => OnCurrentPageChanged();
         ComicService.DisplayModeChanged += () => OnCurrentPageChanged();
         @* {
-            Console.WriteLine($"Got New Display: {ComicService.DisplayMode}");
-            StateHasChanged();
-        }; *@
+Console.WriteLine($"Got New Display: {ComicService.DisplayMode}");
+StateHasChanged();
+}; *@
     }
 
     public void OnCurrentPageChanged()
     {
         LeftPage = ComicService.Pages[ComicService.CurrentPage];
+        LeftColor = LeftPage?.ColorLeft;
+
+
         if (ComicService.CanViewRightPage())
+        {
             RightPage = ComicService.Pages[ComicService.CurrentPage + 1];
+            RightColor = RightPage?.ColorRight;
+        }
         else
             RightPage = null;
 
+        if (RightPage == null)
+        {
+            LeftColor = $"linear-gradient(90deg, {LeftPage?.ColorLeft} , {LeftPage?.ColorRight})";
+        }
+
+
         StateHasChanged();
     }
+
+
 }
