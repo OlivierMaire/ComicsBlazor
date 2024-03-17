@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using Microsoft.JSInterop;
 
 namespace ComicsBlazor;
@@ -9,20 +11,30 @@ namespace ComicsBlazor;
 // This class can be registered as scoped DI service and then injected into Blazor
 // components for use.
 
-public class ExampleJsInterop : IAsyncDisposable
+public class ComicsJsInterop : IAsyncDisposable
 {
+    public Action<Size>? OnWindowResized {get;set;}
+
     private readonly Lazy<Task<IJSObjectReference>> moduleTask;
 
-    public ExampleJsInterop(IJSRuntime jsRuntime)
+    // [DynamicDependency(nameof(UpdateCurrentTimestampFromJs))]
+    public ComicsJsInterop(IJSRuntime jsRuntime)
     {
-        moduleTask = new (() => jsRuntime.InvokeAsync<IJSObjectReference>(
-            "import", "./_content/ComicsBlazor/exampleJsInterop.js").AsTask());
+        moduleTask = new(() => jsRuntime.InvokeAsync<IJSObjectReference>(
+            "import", "./_content/ComicsBlazor/JsInterop.js").AsTask());
     }
 
     public async ValueTask<string> Prompt(string message)
     {
         var module = await moduleTask.Value;
         return await module.InvokeAsync<string>("showPrompt", message);
+    }
+
+    public async ValueTask Init()
+    {
+        var module = await moduleTask.Value;
+        var lDotNetReference = DotNetObjectReference.Create(this);
+        await module.InvokeVoidAsync("comic.init", lDotNetReference);
     }
 
     public async ValueTask DisposeAsync()
@@ -32,5 +44,11 @@ public class ExampleJsInterop : IAsyncDisposable
             var module = await moduleTask.Value;
             await module.DisposeAsync();
         }
+    }
+
+    [JSInvokableAttribute("OnResizeFromJs")]
+    public void OnResizeFromJs(int width, int height)
+    {
+        OnWindowResized?.Invoke(new Size(width, height));
     }
 }

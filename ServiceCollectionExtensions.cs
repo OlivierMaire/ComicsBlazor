@@ -41,6 +41,7 @@ public static partial class ServiceCollectionExtensions
             case ServiceLifetime.Singleton:
                 services.AddSingleton<BlobManagerService>();
                 services.AddSingleton<ComicService>();
+                services.AddSingleton<ComicsJsInterop>();
                 // services.AddSingleton<EPubNavigationService>();
                 // services.AddSingleton<EPubSettingsService>();
                 // services.AddSingleton<EPubThemeService>();
@@ -48,6 +49,7 @@ public static partial class ServiceCollectionExtensions
             case ServiceLifetime.Scoped:
                 services.AddScoped<BlobManagerService>();
                 services.AddScoped<ComicService>();
+                services.AddScoped<ComicsJsInterop>();
                 // services.AddScoped<EPubNavigationService>();
                 // services.AddScoped<EPubSettingsService>();
                 // services.AddScoped<EPubThemeService>();
@@ -56,6 +58,7 @@ public static partial class ServiceCollectionExtensions
             default:
                 services.AddTransient<BlobManagerService>();
                 services.AddTransient<ComicService>();
+                services.AddTransient<ComicsJsInterop>();
                 // services.AddTransient<EPubNavigationService>();
                 // services.AddTransient<EPubSettingsService>();
                 // services.AddTransient<EPubThemeService>();

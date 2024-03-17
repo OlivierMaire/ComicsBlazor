@@ -3,11 +3,15 @@
 @using ComicsBlazor.Components
 @using Microsoft.AspNetCore.Components.Web
 
-<Progress />
-<Title />
 <div class="d-flex flex-row">
 <SidePanel />
+<div class="flex-grow-1">
+    
+<Progress />
+<Title />
 <PageView />
+
+</div>
 </div>
 
 
@@ -30,16 +34,17 @@
 
     private string BlobUrl = string.Empty;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         ComicService.GetPage = GetPage;
-        ComicService.Init(Metadata);
+        await ComicService.InitAsync(Metadata);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
+            await ComicService.InitInteropAsync();
             Console.WriteLine("Comics Loaded");
             ComicService.CurrentPage = 9;
 

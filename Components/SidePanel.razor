@@ -9,7 +9,7 @@
             <div class="page spacer"></div>
         }
 
-        <div class="page @p.PageClass">
+        <div class="page @p.PageClass" @onclick="() => ComicService.GoToPage(p)" >
             @if (p.BlobUri != null)
             {
                 <img style="object-fit: cover; height: 100%;" src="@p.BlobUri" />

@@ -1,6 +1,7 @@
 using System.Drawing;
 using System.Dynamic;
 using ComicsBlazor.Components;
+using Microsoft.VisualBasic;
 using SkiaSharp;
 using SoloX.BlazorJsBlob;
 
@@ -8,18 +9,25 @@ namespace ComicsBlazor.Services;
 
 
 
-public class ComicService(BlobManagerService blobManagerService)
+public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop interopService)
 {
     private readonly BlobManagerService blobManagerService = blobManagerService;
+    private readonly ComicsJsInterop interopService = interopService;
+
     public Func<int, Task<PageData?>>? GetPage { private get; set; } = null;
 
     private string _title { get; set; } = string.Empty;
     public string Title { get => _title; set { if (_title != value) { _title = value; TitleChanged?.Invoke(); } } }
     public Action? TitleChanged { get; set; }
 
-
-    public DisplayMode DisplayMode { get; set; } = DisplayMode.DoublePage;
-
+    private DisplayMode _chosenDisplayMode = DisplayMode.DoublePage;
+    private DisplayMode? _forcedDisplayMode = null;
+    public DisplayMode DisplayMode
+    {
+        get => _forcedDisplayMode ?? _chosenDisplayMode;
+        set { if (value != _chosenDisplayMode) _chosenDisplayMode = value; }
+    }
+    public Action? DisplayModeChanged { get; set; }
 
     public List<Page> Pages { get; set; } = [];
 
@@ -45,12 +53,57 @@ public class ComicService(BlobManagerService blobManagerService)
     public Action? CurrentPageChanged { get; set; }
 
 
-    public void Init(ComicMetadata meta)
+    public async Task InitAsync(ComicMetadata meta)
     {
         Title = meta.Title ?? string.Empty;
         Pages = meta.Pages.Select(p => new Page(p)).ToList();
         RecalculatePageNumbers();
     }
+
+    public async Task InitInteropAsync()
+    {
+        interopService.OnWindowResized += WindowResized;
+        await interopService.Init();
+
+    }
+
+    private void WindowResized(Size size)
+    {
+        DisplayMode? calculatedDisplayMode = null;
+        if (size.Width < size.Height)
+            calculatedDisplayMode = DisplayMode.SinglePage;
+        var page = Pages.FirstOrDefault(p => p.BlobUri != null); // get first loaded image
+        if (page != null)
+        {
+            var ratio = (size.Height - 20) / (double?)page.ImageHeight;
+            var limitWidth = page.ImageWidth * ratio;
+            Console.WriteLine($"limitWidth: {size.Height}x{limitWidth}");
+
+            if (size.Width < limitWidth * 2) // can't fit 2 pages
+                calculatedDisplayMode = DisplayMode.SinglePage;
+
+        }
+
+
+        if (_forcedDisplayMode != calculatedDisplayMode)
+        {
+            if (calculatedDisplayMode == null && _chosenDisplayMode == DisplayMode.DoublePage) // double page
+            {
+                // move to odd page
+                if (Pages[CurrentPage].RealPageNumber % 2 == 0 && CurrentPage > 0)
+                {
+                    CurrentPage--;
+                }
+
+            }
+
+            _forcedDisplayMode = calculatedDisplayMode;
+
+            Console.WriteLine($"New Display mode : {DisplayMode}");
+            DisplayModeChanged?.Invoke();
+        }
+    }
+
 
     public async Task<Page?> LoadPage(int position)
     {
@@ -122,9 +175,32 @@ public class ComicService(BlobManagerService blobManagerService)
 
     public void GoToPage(Page page)
     {
-        CurrentPage = Pages.FindIndex(p => p.PageNumber == page.PageNumber);
+        var plannedPage = Pages.FindIndex(p => p.PageNumber == page.PageNumber);
+
+
+        if (this.DisplayMode == DisplayMode.DoublePage)
+        {
+            // move to odd page
+            if (page.RealPageNumber % 2 == 0 && plannedPage > 0)
+            {
+                plannedPage--;
+            }
+
+        }
+
+        CurrentPage = plannedPage;
     }
 
+
+    public bool CanViewRightPage()
+    {
+        if (this.DisplayMode == DisplayMode.DoublePage && this.CurrentPage + 1 < this.Pages.Count &&
+       !(this.Pages[this.CurrentPage].DoublePage ||
+       this.Pages[this.CurrentPage].PageType == PageType.FrontCover ||
+        this.Pages[this.CurrentPage + 1].DoublePage))
+            return true;
+        return false;
+    }
 
     public void MoveNext()
     {
