@@ -93,3 +93,66 @@
 .page-view .page-area .left-page:has(+ .right-page) {
   text-align: right;
 }
+
+.page-view.flip-Vertical .page-area {
+  transform: rotateX(180deg);
+}
+.page-view.flip-Horizontal .page-area {
+  transform: rotateY(180deg);
+}
+.page-view.flip-VerticalHorizontal .page-area {
+  transform: rotateX(180deg) rotateY(180deg);
+}
+.page-view.rotate-90 .page-area {
+  transform: rotateZ(90deg);
+}
+.page-view.rotate-180 .page-area {
+  transform: rotateZ(180deg);
+}
+.page-view.rotate-270 .page-area {
+  transform: rotateZ(270deg);
+}
+.page-view.rotate-90.flip-Vertical .page-area {
+  transform: rotateZ(90deg) rotateX(180deg);
+}
+.page-view.rotate-180.flip-Vertical .page-area {
+  transform: rotateZ(180deg) rotateX(180deg);
+}
+.page-view.rotate-270.flip-Vertical .page-area {
+  transform: rotateZ(270deg) rotateX(180deg);
+}
+.page-view.rotate-90.flip-Horizontal .page-area {
+  transform: rotateZ(90deg) rotateY(180deg);
+}
+.page-view.rotate-180.flip-Horizontal .page-area {
+  transform: rotateZ(180deg) rotateY(180deg);
+}
+.page-view.rotate-270.flip-Horizontal .page-area {
+  transform: rotateZ(270deg) rotateY(180deg);
+}
+.page-view.rotate-90.flip-VerticalHorizontal .page-area {
+  transform: rotateZ(90deg) rotateX(180deg) rotateY(180deg);
+}
+.page-view.rotate-180.flip-VerticalHorizontal .page-area {
+  transform: rotateZ(180deg) rotateX(180deg) rotateY(180deg);
+}
+.page-view.rotate-270.flip-VerticalHorizontal .page-area {
+  transform: rotateZ(270deg) rotateX(180deg) rotateY(180deg);
+}
+.page-view.scale-Width .left-page, .page-view.scale-Width .right-page {
+  width: 100%;
+  height: unset;
+}
+.page-view.scale-Native {
+  max-width: unset;
+}
+.page-view.scale-Native .left-page, .page-view.scale-Native .right-page {
+  width: unset;
+  height: unset;
+}
+.page-view.scale-Native .left-page img, .page-view.scale-Native .right-page img {
+  height: unset;
+  max-width: unset;
+  object-fit: unset;
+  -o-object-fit: unset;
+}

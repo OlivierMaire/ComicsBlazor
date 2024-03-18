@@ -122,3 +122,125 @@
 
     }
 }
+
+.page-view{
+    &.flip-Vertical{
+        .page-area
+        {
+            transform: rotateX(180deg);
+        }
+    }
+    &.flip-Horizontal{
+        .page-area
+        {
+            transform: rotateY(180deg);
+        }
+    }
+    
+    &.flip-VerticalHorizontal{
+        .page-area
+        {
+            transform: rotateX(180deg) rotateY(180deg);
+        }
+    }
+
+    &.rotate-90{
+        .page-area
+        {
+            transform: rotateZ(90deg);
+        } 
+    }
+    &.rotate-180{
+        .page-area
+        {
+            transform: rotateZ(180deg);
+        } 
+    }
+    
+    &.rotate-270{
+        .page-area
+        {
+            transform: rotateZ(270deg);
+        } 
+    }
+
+    &.rotate-90.flip-Vertical{
+        .page-area
+        {
+            transform: rotateZ(90deg) rotateX(180deg);
+        } 
+    }
+    &.rotate-180.flip-Vertical{
+        .page-area
+        {
+            transform: rotateZ(180deg) rotateX(180deg);
+        } 
+    }
+    
+    &.rotate-270.flip-Vertical{
+        .page-area
+        {
+            transform: rotateZ(270deg) rotateX(180deg);
+        } 
+    }
+
+    
+    &.rotate-90.flip-Horizontal{
+        .page-area
+        {
+            transform: rotateZ(90deg) rotateY(180deg);
+        } 
+    }
+    &.rotate-180.flip-Horizontal{
+        .page-area
+        {
+            transform: rotateZ(180deg) rotateY(180deg);
+        } 
+    }
+    
+    &.rotate-270.flip-Horizontal{
+        .page-area
+        {
+            transform: rotateZ(270deg) rotateY(180deg);
+        } 
+    }
+    &.rotate-90.flip-VerticalHorizontal{
+        .page-area
+        {
+            transform: rotateZ(90deg) rotateX(180deg) rotateY(180deg);
+        } 
+    }
+    &.rotate-180.flip-VerticalHorizontal{
+        .page-area
+        {
+            transform: rotateZ(180deg) rotateX(180deg) rotateY(180deg);
+        } 
+    }
+    
+    &.rotate-270.flip-VerticalHorizontal{
+        .page-area
+        {
+            transform: rotateZ(270deg) rotateX(180deg) rotateY(180deg);
+        } 
+    }
+ 
+    &.scale-Width{
+        .left-page, .right-page{
+            width: 100%;
+            height: unset;
+        }
+    }
+    &.scale-Native{
+        max-width: unset;
+        .left-page, .right-page{
+            width: unset;
+            height: unset;
+            img{
+                height: unset;
+                max-width: unset;
+                object-fit: unset;
+                -o-object-fit: unset;
+            }
+        }
+    }
+}

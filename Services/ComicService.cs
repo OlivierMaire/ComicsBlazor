@@ -32,6 +32,17 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
     public List<Page> Pages { get; set; } = [];
 
 
+    public string PageViewClass => $" rotate-{DisplayRotation} flip-{FlipDisplay} scroll-{Scrollbars} scale-{Scale} ";
+    public int DisplayRotation { get; set; } = 0;
+
+    public FlipMode FlipDisplay { get; set; } = FlipMode.Normal;
+
+    public NavigationMode Direction { get; set; } = NavigationMode.LeftToRight;
+
+    public ScrollBarMode Scrollbars {get;set;} = ScrollBarMode.Visible;
+    public ScaleMode Scale {get;set;} = ScaleMode.Best;
+
+
 
     private int _currentPage = 0;
     public int CurrentPage
@@ -51,7 +62,6 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
 
     public Action? PagesChanged { get; set; }
     public Action? CurrentPageChanged { get; set; }
-
 
     public async Task InitAsync(ComicMetadata meta)
     {
@@ -74,6 +84,76 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
             MoveBack();
         else if (key == "ArrowRight")
             MoveNext();
+
+        if (key == "r")
+        {
+            DisplayRotation += 90;
+            if (DisplayRotation == 360) DisplayRotation = 0;
+            DisplayModeChanged?.Invoke();
+        }
+
+        if (key == "l")
+        {
+            DisplayRotation -= 90;
+            if (DisplayRotation == -90) DisplayRotation = 270;
+            DisplayModeChanged?.Invoke();
+
+        }
+
+        if (key == "f")
+        {
+            FlipDisplay = FlipDisplay.Next();
+            DisplayModeChanged?.Invoke();
+        }
+
+        if (key == "d")
+        {
+            Direction = Direction.Next();
+            Console.WriteLine($"New Direction: {Direction}");
+        }
+        
+        if (key == "1")
+        {
+            DisplayMode = DisplayMode.SinglePage;
+            DisplayModeChanged?.Invoke();
+        }
+        
+        if (key == "2")
+        {
+            DisplayMode = DisplayMode.DoublePage;
+            DisplayModeChanged?.Invoke();
+        }
+        
+        if (key == "s")
+        {
+            Scrollbars = Scrollbars.Next();
+            DisplayModeChanged?.Invoke();
+        }
+        
+        if (key == "b")
+        {
+            Scale = ScaleMode.Best;
+            DisplayModeChanged?.Invoke();
+        }
+        
+        if (key == "w")
+        {
+            Scale = ScaleMode.Width;
+            DisplayModeChanged?.Invoke();
+        }
+          
+        if (key == "h")
+        {
+            Scale = ScaleMode.Height;
+            DisplayModeChanged?.Invoke();
+        }
+        
+        if (key == "n")
+        {
+            Scale = ScaleMode.Native;
+            DisplayModeChanged?.Invoke();
+        }
+
     }
 
     private void WindowResized(Size size)
@@ -261,8 +341,14 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
         return false;
     }
 
-    public void MoveNext()
+    public void MoveNext(bool forced = false)
     {
+        if (Direction == NavigationMode.RightToLeft && !forced)
+        {
+            MoveBack(true);
+            return;
+        }
+
         if (DisplayMode == DisplayMode.DoublePage)
         {
             if (CurrentPage + 1 >= Pages.Count)
@@ -288,8 +374,14 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
     }
 
 
-    public void MoveBack()
+    public void MoveBack(bool forced = false)
     {
+        if (Direction == NavigationMode.RightToLeft && !forced)
+        {
+            MoveNext(true);
+            return;
+        }
+
         if (DisplayMode == DisplayMode.DoublePage)
         {
             if (CurrentPage - 1 < 0)
@@ -366,4 +458,43 @@ public enum DisplayMode
 {
     DoublePage,
     SinglePage
+}
+
+public enum FlipMode
+{
+    Normal = 0,
+    Vertical = 1,
+    Horizontal = 2,
+    VerticalHorizontal = 3
+}
+
+public enum NavigationMode
+{
+    LeftToRight,
+    RightToLeft
+}
+
+public enum ScaleMode{
+    Best,
+    Width,
+    Height,
+    Native
+}
+
+public enum ScrollBarMode{
+    Visible, 
+    Hidden
+}
+
+public static class Extensions
+{
+
+    public static T Next<T>(this T src) where T : struct
+    {
+        if (!typeof(T).IsEnum) throw new ArgumentException(String.Format("Argument {0} is not an Enum", typeof(T).FullName));
+
+        T[] Arr = (T[])Enum.GetValues(src.GetType());
+        int j = Array.IndexOf<T>(Arr, src) + 1;
+        return (Arr.Length == j) ? Arr[0] : Arr[j];
+    }
 }

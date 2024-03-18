@@ -54,11 +54,18 @@ public class ComicsJsInterop : IAsyncDisposable
         OnWindowResized?.Invoke(new Size(width, height));
     }
 
+    private readonly static string[] BindedKeys = ["ArrowLeft", "ArrowRight", "b", "w", "h", "n", "r", "l", "f", "d", "s", "1", "2"];
+
     [JSInvokable("JsKeyDown")]
     public void JsKeyDown(KeyboardEventArgs e)
     {
-        if (e.Key == "ArrowLeft" || e.Key == "ArrowRight")
+        if (BindedKeys.Contains(e.Key))
             OnKeyDown?.Invoke(e.Key);
+        if (e.Key == " " && e.ShiftKey == true)
+            OnKeyDown?.Invoke("ArrowLeft");
+        if (e.Key == " " && e.ShiftKey == false)
+            OnKeyDown?.Invoke("ArrowRight");
+
 
     }
 }

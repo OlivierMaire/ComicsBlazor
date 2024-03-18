@@ -1,6 +1,6 @@
 @using Microsoft.AspNetCore.Components.Web
 
-<div class="page-view">
+<div class="page-view @ComicService.PageViewClass">
     <div class="left-icon" @onclick="@(() => ComicService.MoveBack())"></div>
     <div class="page-area">
         <div class="left-page" style="background: @LeftColor;">

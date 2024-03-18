@@ -40,6 +40,7 @@ export var comic = {
     };
 
     window.document.addEventListener('keydown', function (e) {
+      console.log(`KEYDOWN: M ${e.metaKey} ${e.key}`);
       me.dotNetReference.invokeMethodAsync('JsKeyDown',
         serializeEvent(e));
     });
