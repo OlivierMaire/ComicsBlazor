@@ -51,7 +51,7 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
     public Action? PagesChanged { get; set; }
     public Action? CurrentPageChanged { get; set; }
 
-    public async Task InitAsync(ComicMetadata meta)
+    public void Init(ComicMetadata meta)
     {
         Title = meta.Title ?? string.Empty;
         Pages = meta.Pages.Select(p => new Page(p)).ToList();
@@ -472,7 +472,7 @@ public class Page : ComicMetadata.PageInfo
     public int? RealPageNumber { get; set; }
     public string RealPageNumberString => DoublePage ? (RealPageNumber != null ? $"{RealPageNumber} - {RealPageNumber + 1}" : "") : RealPageNumber.ToString() ?? string.Empty;
 
-    public string ColorLeft { get; internal set; }
-    public string ColorRight { get; internal set; }
+    public string ColorLeft { get; internal set; } = string.Empty;
+    public string ColorRight { get; internal set; } = string.Empty;
 }
 

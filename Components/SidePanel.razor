@@ -58,7 +58,7 @@
 
 @code
 {
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         ComicService.PagesChanged += () => StateHasChanged();
         ComicService.DisplayModeChanged += () => StateHasChanged();

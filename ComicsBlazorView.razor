@@ -41,13 +41,13 @@
 
     private string BlobUrl = string.Empty;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         ComicService.GetPage = GetPage;
         ComicService.SaveBookmark = SaveBookmark;
         ComicService.ThemeChanged += () => StateHasChanged();
         ComicService.ToggleSettings += () => { DisplaySettings = !DisplaySettings;StateHasChanged();};
-        await ComicService.InitAsync(Metadata);
+        ComicService.Init(Metadata);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
