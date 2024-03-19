@@ -4,6 +4,17 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+
+        <PackageId>AudioPlayerBlazor</PackageId>
+    <!-- <Version>0.0.2-alpha</Version> -->
+    <Authors>Olivier Maire</Authors>
+    <Company>Olivier Maire</Company>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>Comics;Comics Reader;Blazor;.Net;</PackageTags>
+    <PackageProjectUrl>https://github.com/OlivierMaire/ComicsBlazor</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/OlivierMaire/ComicsBlazor.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
 
@@ -19,5 +30,16 @@
     <PackageReference Include="SkiaSharp.Views.Blazor" Version="2.88.7" />
     <PackageReference Include="SoloX.BlazorJsBlob" Version="1.0.2" />
   </ItemGroup>
+
+    <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GitVersion.MsBuild" Version="5.12.0">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
 
 </Project>
