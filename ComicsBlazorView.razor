@@ -56,7 +56,6 @@
         {
             await ComicService.InitSettings();
             await ComicService.InitInteropAsync();
-            Console.WriteLine("Comics Loaded");
             ComicService.CurrentPage = Metadata.LastReadPosition ?? 0;
             if (ComicService.CurrentPage == 0)
             {

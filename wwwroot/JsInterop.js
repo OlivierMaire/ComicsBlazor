@@ -8,14 +8,12 @@ export function showPrompt(message) {
 export var comic = {
   dotNetReference: undefined,
   init(pDotNetReference) {
-    console.log("initialize interop...");
     this.dotNetReference = pDotNetReference;
     window.addEventListener("resize", this.reportWindowSize.bind(this));
     this.reportWindowSize(null);
     this.addKeyboardListenerEvent(this);
   },
   reportWindowSize(e) {
-    console.log("reportWindowSize");
     if (this.dotNetReference) {
       this.dotNetReference.invokeMethodAsync('OnResizeFromJs',
         window.innerWidth, window.innerHeight);
@@ -40,7 +38,6 @@ export var comic = {
     };
 
     window.document.addEventListener('keydown', function (e) {
-      console.log(`KEYDOWN: M ${e.metaKey} ${e.key}`);
       me.dotNetReference.invokeMethodAsync('JsKeyDown',
         serializeEvent(e));
     });
