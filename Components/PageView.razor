@@ -1,0 +1,69 @@
+@using Microsoft.AspNetCore.Components.Web
+@using ComicsBlazor.Services
+@inject ComicService ComicService
+
+<div class="page-view @ComicService.Settings.PageViewClass">
+    <div class="left-icon" @onclick="@(() => ComicService.MoveBack())"></div>
+    <div class="page-area">
+        <div class="left-page" style="background: @LeftColor;">
+            <img src="@LeftPage?.BlobUri" />
+            @if (ComicService.Settings.DisplayMode == DisplayMode.DoublePage && !(LeftPage?.DoublePage ?? false) &&
+            RightPage != null && ComicService.Settings.CreaseShadow)
+            {
+                <div class="left-shadow"></div>
+            }
+        </div>
+        @if (ComicService.Settings.DisplayMode == DisplayMode.DoublePage && RightPage != null)
+        {
+            <div class="right-page" style="background: @RightColor;">
+                <img src="@RightPage?.BlobUri" />
+                @if (ComicService.Settings.CreaseShadow)
+                {
+                    <div class="right-shadow"></div>
+                }
+            </div>
+        }
+
+    </div>
+    <div class="right-icon" @onclick="@(() => ComicService.MoveNext())"></div>
+</div>
+
+@code {
+    private Page? LeftPage { get; set; }
+    private Page? RightPage { get; set; }
+
+    public string? LeftColor { get; set; } = string.Empty;
+    public string? RightColor { get; set; } = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        ComicService.CurrentPageChanged += () => OnCurrentPageChanged();
+        ComicService.DisplayModeChanged += () => OnCurrentPageChanged();
+    }
+
+    public void OnCurrentPageChanged()
+    {
+        LeftPage = ComicService.Pages[ComicService.CurrentPage];
+        LeftColor = ComicService.Settings.Background == BackgroundMode.Dynamic ? LeftPage?.ColorLeft :
+        ComicService.Settings.BackgroundColor;
+
+
+        if (ComicService.CanViewRightPage())
+        {
+            RightPage = ComicService.Pages[ComicService.CurrentPage + 1];
+            RightColor = ComicService.Settings.Background == BackgroundMode.Dynamic ? RightPage?.ColorLeft :
+            ComicService.Settings.BackgroundColor;
+        }
+        else
+            RightPage = null;
+
+        if (RightPage == null && ComicService.Settings.Background == BackgroundMode.Dynamic)
+        {
+            LeftColor = $"linear-gradient(90deg, {LeftPage?.ColorLeft} , {LeftPage?.ColorRight})";
+        }
+
+        StateHasChanged();
+    }
+
+
+}

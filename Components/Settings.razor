@@ -1,0 +1,270 @@
+@using Microsoft.AspNetCore.Components.Forms
+@using ComicsBlazor.Services
+@inject Services.ComicService ComicService;
+<div class="settings-panel noto-sans">
+    <div class="title noto-sans">  <div>Settings</div><div class="close-icon" @onclick="Close"></div></div>
+
+    <div class="settings-content">
+        <div class="settings-keymap">
+            <div class="keymap-category">Navigation</div>
+            <div class="keymap">
+                <div><span>←</span><span>⇧⎵</span></div>
+                <div>Previous Page</div>
+            </div>
+            <div class="keymap">
+                <div><span>→</span><span>⎵</span></div>
+                <div>Next Page</div>
+            </div>
+            <div class="keymap">
+                <div>D</div>
+                <div>Change Direction <small>(ltr/rtl)</small></div>
+            </div>
+
+            <div class="keymap-category">Scaling</div>
+            <div class="keymap">
+                <div>B</div>
+                <div>Scale to Best <small>(default)</small></div>
+            </div>
+            <div class="keymap">
+                <div>W</div>
+                <div>Scale to Width</div>
+            </div>
+            <div class="keymap">
+                <div>H</div>
+                <div>Scale to Height</div>
+            </div>
+            <div class="keymap">
+                <div>N</div>
+                <div>Scale to Native</div>
+            </div>
+            <div class="keymap-category">Transformations</div>
+            <div class="keymap">
+                <div>R</div>
+                <div>Rotate Clockwise</div>
+            </div>
+            <div class="keymap">
+                <div>L</div>
+                <div>Rotate Anticlockwise</div>
+            </div>
+            <div class="keymap">
+                <div>F</div>
+                <div>Flip Image <small>(Vertical/Horizontal/Both)</small></div>
+            </div>
+            <div class="keymap-category">Display Mode</div>
+            <div class="keymap">
+                <div>1</div>
+                <div>Single Page</div>
+            </div>
+            <div class="keymap">
+                <div>2</div>
+                <div>Double Page <small>(default)</small></div>
+            </div>
+            <div class="keymap">
+                <div>S</div>
+                <div>Toggle Scrollbars</div>
+            </div>
+        </div>
+        <div class="separator"></div>
+        <Microsoft.AspNetCore.Components.Forms.EditForm Model="ComicService.Settings">
+            <div class="settings-inputs">
+
+             <div class="setting">
+                    <div>Theme</div>
+                    <div>
+                        <InputRadioGroup @bind-Value="ComicService.Settings.Theme">
+                            <div class="input">
+                                @foreach (var enumValue in (ThemeMode[])Enum
+                                .GetValues(typeof(ThemeMode)))
+                                {
+                                    var name = $"ComicService.Settings.Theme.{enumValue}";
+                                    <InputRadio Value="enumValue" id="@name" />
+                                    <label for="@name">@enumValue</label>
+                                }
+                            </div>
+                        </InputRadioGroup>
+                    </div>
+                </div>
+                
+                <div class="setting">
+                    <div>Rotation</div>
+                    <div>
+                        <InputRadioGroup @bind-Value="ComicService.Settings.DisplayRotation">
+                            <div class="input">
+                                @foreach (var enumValue in (DisplayRotationMode[])Enum
+                                .GetValues(typeof(DisplayRotationMode)))
+                                {
+                                    var name = $"ComicService.Settings.DisplayRotation.{enumValue}";
+                                    <InputRadio Value="enumValue" id="@name" />
+                                    <label for="@name">@((int)enumValue)&deg;</label>
+                                }
+                            </div>
+                        </InputRadioGroup>
+                    </div>
+                </div>
+                <div class="setting">
+                    <div>Flip</div>
+                    <div>
+                        <InputRadioGroup @bind-Value="ComicService.Settings.FlipDisplay">
+                            <div class="input" style="flex-wrap: wrap;">
+                                @foreach (var enumValue in (FlipMode[])Enum
+                                .GetValues(typeof(FlipMode)))
+                                {
+                                    var name = $"ComicService.Settings.FlipDisplay.{enumValue}";
+                                    <InputRadio Value="enumValue" id="@name" />
+                                    <label for="@name">@(enumValue)</label>
+                                    @if ((int)enumValue % 2 == 1)
+                                    {
+                                        <div class="break" />
+                                    }
+                                }
+                            </div>
+                        </InputRadioGroup>
+                    </div>
+                </div>
+
+                <div class="setting">
+                    <div>Direction</div>
+                    <div>
+                        <InputRadioGroup @bind-Value="ComicService.Settings.Direction">
+                            <div class="input">
+                                @foreach (var enumValue in (NavigationMode[])Enum
+                                .GetValues(typeof(NavigationMode)))
+                                {
+                                    var name = $"ComicService.Settings.Direction.{enumValue}";
+                                    <InputRadio Value="enumValue" id="@name" />
+                                    <label for="@name">@(enumValue)</label>
+                                }
+                            </div>
+                        </InputRadioGroup>
+                    </div>
+                </div>
+
+                <div class="setting">
+                    <div>Page Mode</div>
+                    <div>
+                        <InputRadioGroup @bind-Value="ComicService.Settings.DisplayMode">
+                            <div class="input">
+                                @foreach (var enumValue in (DisplayMode[])Enum
+                                .GetValues(typeof(DisplayMode)))
+                                { 
+                                    var name = $"ComicService.Settings.DisplayMode.{enumValue}";
+                                    <InputRadio Value="enumValue" id="@name" />
+                                    <label for="@name">@(enumValue)</label>
+                                }
+                            </div>
+                        </InputRadioGroup>
+                    </div>
+                </div>
+
+                <div class="setting">
+                    <div>Scaling</div>
+                    <div>
+                        <InputRadioGroup @bind-Value="ComicService.Settings.Scale">
+                            <div class="input">
+                                @foreach (var enumValue in (ScaleMode[])Enum
+                                .GetValues(typeof(ScaleMode)))
+                                {
+                                    var name = $"ComicService.Settings.Scale.{enumValue}";
+                                    <InputRadio Value="enumValue" id="@name" />
+                                    <label for="@name">@(enumValue)</label>
+                                }
+                            </div>
+                        </InputRadioGroup>
+                    </div>
+                </div>
+
+                <div class="setting">
+                    <div>Display Scrollbars</div>
+                    <div>
+                        <InputRadioGroup @bind-Value="ComicService.Settings.Scrollbars">
+                            <div class="input">
+                                @foreach (var enumValue in (ScrollBarMode[])Enum
+                                .GetValues(typeof(ScrollBarMode)))
+                                {
+                                    var name = $"ComicService.Settings.Scrollbars.{enumValue}";
+                                    <InputRadio Value="enumValue" id="@name" />
+                                    <label for="@name">@(enumValue)</label>
+                                }
+                            </div>
+                        </InputRadioGroup>
+                    </div>
+                </div>
+
+                <div class="setting">
+                    <div>Preload</div>
+                    <div>
+                        <div class="input" style="flex-wrap: wrap;">
+                            <InputNumber @bind-Value="ComicService.Settings.PreloadBefore" /> Pages before and <div
+                                class="break"></div>
+                            <InputNumber @bind-Value="ComicService.Settings.PreloadAfter" /> Pages after
+                        </div>
+                    </div>
+                </div>
+
+              <div class="setting">
+                    <div>Background Color</div>
+                    <div>
+                            <div class="input">
+                        <InputRadioGroup @bind-Value="ComicService.Settings.Background">
+                                @foreach (var enumValue in (BackgroundMode[])Enum
+                                .GetValues(typeof(BackgroundMode)))
+                                {
+                                    var name = $"ComicService.Settings.Background.{enumValue}";
+                                    <InputRadio Value="enumValue" id="@name" />
+                                    <label for="@name">@(enumValue)</label>
+                                }
+                        </InputRadioGroup>
+                        @if (ComicService.Settings.Background == BackgroundMode.Solid)
+                        {
+                            <InputText @bind-Value="ComicService.Settings.BackgroundColor" />  <div class="color-swatch" style="background-color: @ComicService.Settings.BackgroundColor;"></div>
+                        }
+                            </div>
+                    </div>
+                </div>
+
+          <div class="setting">
+                    <div>Display crease shadow between pages</div>
+                    <div>
+                        <InputRadioGroup @bind-Value="ComicService.Settings.CreaseShadow">
+                            <div class="input">
+                                    <InputRadio Value="true" id="ComicService.Settings.CreaseShadow.Yes" />
+                                    <label for="ComicService.Settings.CreaseShadow.Yes">Yes</label>
+                                    
+                                    <InputRadio Value="false" id="ComicService.Settings.CreaseShadow.No"/>
+                                    <label for="ComicService.Settings.CreaseShadow.No">No</label>
+                            </div>
+                        </InputRadioGroup>
+                    </div>
+                </div>
+
+            </div>
+        </Microsoft.AspNetCore.Components.Forms.EditForm>
+    </div>
+
+
+
+    @* <div class="settings-button-close" @onclick="closeSettings">Close</div> *@
+</div>
+
+
+@code {
+
+    @* void closeSettings()
+{
+SettingService.CloseSettings();
+} *@
+
+    protected override void OnInitialized()
+    {
+        ComicService.CurrentPageChanged += () => StateHasChanged();
+        ComicService.DisplayModeChanged += () => StateHasChanged();
+        ComicService.SettingsChanged += () => StateHasChanged();
+    }
+
+    private void Close()
+    {
+        ComicService.ToggleSettings?.Invoke();
+    }
+
+
+}

@@ -1,0 +1,217 @@
+.settings-panel {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--bg-panel);
+  border-radius: 6px;
+  z-index: 4;
+  padding: 1rem;
+  font-size: 0.8rem;
+}
+.settings-panel .title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-bottom: solid 1px var(--purple-light-shade);
+  margin-bottom: 4px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.settings-panel .title .close-icon {
+  opacity: 0.6;
+  height: 1.1rem;
+  width: 1.1rem;
+  transition: opacity linear 0.2s;
+  cursor: pointer;
+}
+.settings-panel .title .close-icon:hover {
+  opacity: 1;
+}
+.settings-panel .settings-content {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+.settings-panel .settings-content .separator {
+  border-left: 1px solid var(--purple-light-shade);
+  height: 200px;
+  width: 1px;
+  align-self: center;
+}
+.settings-panel .settings-content .keymap-category,
+.settings-panel .settings-content .settings-category {
+  font-size: 1rem;
+  font-weight: 500;
+}
+.settings-panel .settings-content .settings-keymap {
+  display: flex;
+  flex-direction: column;
+}
+.settings-panel .settings-content .settings-keymap .keymap {
+  display: flex;
+  flex-direction: row;
+  gap: 0.4rem;
+  align-items: center;
+}
+.settings-panel .settings-content .settings-keymap .keymap div {
+  display: inline-block;
+}
+.settings-panel .settings-content .settings-keymap .keymap div small {
+  font-size: 0.6rem;
+  color: var(--purple-light-shade);
+}
+.settings-panel .settings-content .settings-keymap .keymap div:first-child {
+  padding-right: 4px;
+  border-right: solid 1px var(--purple-light-shade);
+  width: 30px;
+  text-align: center;
+}
+.settings-panel .settings-content .settings-keymap .keymap div:first-child span {
+  display: block;
+}
+.settings-panel .settings-content .settings-inputs {
+  max-width: 350px;
+}
+.settings-panel .settings-content .settings-inputs .setting {
+  padding-top: 0.1rem;
+  padding-bottom: 0.1rem;
+  display: flex;
+  flex-direction: row;
+  gap: 0.4rem;
+}
+.settings-panel .settings-content .settings-inputs .setting div {
+  display: inline-block;
+}
+.settings-panel .settings-content .settings-inputs .setting div small {
+  font-size: 0.6rem;
+  color: var(--purple-light-shade);
+}
+.settings-panel .settings-content .settings-inputs .setting > div:first-child::after {
+  content: ":";
+}
+.settings-panel .settings-content .settings-inputs .setting .input {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 0.2rem;
+}
+.settings-panel .settings-content .settings-inputs .setting .input .break {
+  flex-basis: 100%;
+  height: 0;
+}
+.settings-panel .settings-content .settings-inputs .setting .input ::deep input[type=number] {
+  max-width: 3rem;
+  text-align: right;
+  padding-right: 0.1rem;
+}
+.settings-panel .settings-content .settings-inputs .setting .input ::deep input[type=number]::-webkit-outer-spin-button, .settings-panel .settings-content .settings-inputs .setting .input ::deep input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.settings-panel .settings-content .settings-inputs .setting .input ::deep input:has(+ .color-swatch) {
+  max-width: 4rem;
+}
+.settings-panel .settings-content .settings-inputs .setting .input ::deep .color-swatch {
+  width: 3rem;
+}
+.settings-panel .settings-inputs .settings-input-form {
+  padding: 2px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2px;
+}
+.settings-panel .settings-inputs .settings-input-form .settings-input {
+  vertical-align: middle;
+}
+.settings-panel .settings-inputs .settings-input-form .settings-input input {
+  background-color: #060606;
+  border: none;
+  border-bottom: solid 1px #ccc;
+  padding-bottom: px;
+  color: #b2b2b2;
+  text-align: right;
+  -moz-appearance: textfield;
+}
+.settings-panel .settings-inputs .settings-input-form .settings-input input:focus-visible {
+  outline: none;
+}
+.settings-panel .settings-inputs .settings-input-form .settings-input input::-webkit-outer-spin-button, .settings-panel .settings-inputs .settings-input-form .settings-input input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.settings-panel .settings-button-close {
+  padding: 2px 4px;
+  margin: 2px;
+  border: solid 1px #b2b2b2;
+  border-radius: 4px;
+  background-color: rgba(91, 76, 221, 0.2549019608);
+  transition: background-color linear 0.3s;
+  cursor: pointer;
+  width: -moz-fit-content;
+  width: fit-content;
+}
+.settings-panel .settings-button-close:hover {
+  background-color: #5B4CDD;
+}
+
+/*** SWITCH ***/
+.onoffswitch {
+  position: relative;
+  width: 32px;
+  height: 12px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.onoffswitch-checkbox {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.onoffswitch-label {
+  display: block;
+  overflow: hidden;
+  cursor: pointer;
+  height: 12px;
+  padding: 0;
+  line-height: 12px;
+  border: 0px solid #FFFFFF;
+  border-radius: 20px;
+  background-color: #9E9E9E;
+}
+
+.onoffswitch-label:before {
+  content: "";
+  display: block;
+  width: 20px;
+  margin: -4px;
+  background: #D1D1D1;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 16px;
+  border-radius: 20px;
+}
+
+.onoffswitch-checkbox:checked + .onoffswitch-label {
+  background-color: #5B4CDD;
+}
+
+.onoffswitch-checkbox:checked + .onoffswitch-label,
+.onoffswitch-checkbox:checked + .onoffswitch-label:before {
+  border-color: #5B4CDD;
+}
+
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+  margin-left: 0;
+}
+
+.onoffswitch-checkbox:checked + .onoffswitch-label:before {
+  right: 0px;
+  background-color: #5B4CDD;
+}
