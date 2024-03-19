@@ -209,7 +209,6 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
 
             Settings._forcedDisplayMode = calculatedDisplayMode;
 
-            Console.WriteLine($"New Display mode : {Settings.DisplayMode}");
             DisplayModeChanged?.Invoke();
         }
     }
@@ -217,7 +216,6 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
 
     public async Task<Page?> LoadPage(int position)
     {
-        Console.WriteLine($"Load Page {position}");
         var page = Pages[position];
 
 
@@ -227,7 +225,6 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
             if (pageData != null)
             {
                 IBlob blob = await blobManagerService.AddBlobAsync(page.Key, pageData.Data, pageData.ContentType);
-                Console.WriteLine($"Blob Added {blob.Uri}");
 
                 page.BlobUri = blob.Uri;
                 using (SKBitmap sourceBitmap = SKBitmap.Decode(pageData.Data))
@@ -310,8 +307,6 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
 
     public async Task LoadAtPosition()
     {
-        Console.WriteLine($"load at position {CurrentPage}");
-
         // load current page
         if (CurrentPage < Pages.Count && Pages[CurrentPage].BlobUri == null)
             await this.LoadPage(CurrentPage);

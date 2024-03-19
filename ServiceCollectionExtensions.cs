@@ -31,7 +31,6 @@ public static partial class ServiceCollectionExtensions
     /// <returns>The given service collection updated with the ComicsBlazor services.</returns>
     public static IServiceCollection AddComicsBlazor(this IServiceCollection services, Action<ComicsBlazorOptions> optionsBuilder, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
     {
-        Console.WriteLine("Registering ComicsBlazor services");
         services.AddJsBlob(serviceLifetime);
         // services.AddHttpClient();
         // services.AddSingleton<IBufferService, BufferService>();
