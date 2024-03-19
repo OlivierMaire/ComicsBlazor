@@ -4,6 +4,9 @@ using System.Text.Json.Serialization;
 namespace ComicsBlazor;
 public record ComicMetadata()
 {
+    public int? LastReadPosition {get;set;} = 0; // Bookmark
+
+
     public bool IsEmpty { get; set; } = true;
     public string TagOrigin { get; set; } = string.Empty;
 

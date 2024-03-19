@@ -1,6 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Mono:wdth@87.5&display=swap');
 
-:root {
+@mixin light-theme {
+  color-scheme: light;
+
+  color: #000;
+  background-color: #fff;
+
   --purple-light: #e8e6f9;
   --purple-light-shade: #b8b6c4;
 
@@ -8,12 +13,64 @@
   --purple-bright-shade: #9d93eb;
   --purple-bright-highlight: #7c70e4;
 
+  --purple-extrabright: #594ae2;
   --bg-panel: var(--purple-light);
+}
+
+
+@mixin dark-theme {
+  color-scheme: dark;
+
+  color: #b7b7b7;
+  background-color: #000;
+
+
+  --purple-light: #1e1e20;
+  --purple-light-shade: #525158;
+
+  --purple-bright: #4b4860;
+  --purple-bright-shade: #48446d;
+  --purple-bright-highlight: #554d9c;
+
+  --purple-extrabright: #4438ac;
+  --bg-panel: var(--purple-light);
+}
+
+.theme-Auto {
+
+  /* Light mode */
+  @media (prefers-color-scheme: light) {
+   @include light-theme();
+  }
+
+  /* Dark mode */
+  @media (prefers-color-scheme: dark) {
+    @include dark-theme();
+
+  }
+}
+
+:root {
+  // color-scheme: light dark;
+
 
   --side-panel-width: 180px;
   --side-panel-translate: 180px;
 
 }
+ 
+
+.theme-Light {
+  @include light-theme();
+}
+
+.theme-Dark {
+  @include dark-theme();
+}
+
+
+
+
 
 .side-panel:has(+ div .sidebar-open-icon) {
   // --side-panel-width: 0;
@@ -61,4 +118,10 @@ body:has(.scroll-Hidden) {
   /* Firefox */
   -ms-overflow-style: none;
   /* IE and Edge */
+}
+
+.comics-blazor-view {
+  display: flex;
+  flex-direction: row;
+  position: relative;
 }

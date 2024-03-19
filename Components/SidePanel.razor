@@ -1,5 +1,5 @@
 @inject Services.ComicService ComicService;
-<div class="side-panel @ComicService.DisplayMode">
+<div class="side-panel @ComicService.Settings.DisplayMode">
     <div class="page-list">
         @foreach (var p in ComicService.Pages)
         {

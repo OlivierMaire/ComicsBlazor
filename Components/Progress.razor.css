@@ -7,10 +7,10 @@
 .comic-progress .page {
   opacity: 0.5;
   width: 100%;
-  background-color: rgb(118, 106, 231);
+  background-color: var(--purple-bright-highlight);
 }
 .comic-progress .page.loaded {
-  background-color: rgb(89, 74, 226);
+  background-color: var(--purple-extrabright);
   opacity: 0.6;
 }
 .comic-progress .page:hover {

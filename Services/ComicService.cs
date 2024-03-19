@@ -9,40 +9,27 @@ namespace ComicsBlazor.Services;
 
 
 
-public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop interopService)
+public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop interopService, Blazored.LocalStorage.ILocalStorageService localStorage)
 {
     private readonly BlobManagerService blobManagerService = blobManagerService;
     private readonly ComicsJsInterop interopService = interopService;
+    private readonly Blazored.LocalStorage.ILocalStorageService localStorage = localStorage;
 
     public Func<int, Task<PageData?>>? GetPage { private get; set; } = null;
+    public Action<string>? SaveBookmark { private get; set; } = null;
 
     private string _title { get; set; } = string.Empty;
     public string Title { get => _title; set { if (_title != value) { _title = value; TitleChanged?.Invoke(); } } }
     public Action? TitleChanged { get; set; }
+    public Action? ThemeChanged { get; set; }
+    public Action? ToggleSettings { get; set; }
 
-    private DisplayMode _chosenDisplayMode = DisplayMode.DoublePage;
-    private DisplayMode? _forcedDisplayMode = null;
-    public DisplayMode DisplayMode
-    {
-        get => _forcedDisplayMode ?? _chosenDisplayMode;
-        set { if (value != _chosenDisplayMode) _chosenDisplayMode = value; }
-    }
     public Action? DisplayModeChanged { get; set; }
+    public Action? SettingsChanged { get; set; }
+
+    internal SettingsModel Settings { get; set; } = new();
 
     public List<Page> Pages { get; set; } = [];
-
-
-    public string PageViewClass => $" rotate-{DisplayRotation} flip-{FlipDisplay} scroll-{Scrollbars} scale-{Scale} ";
-    public int DisplayRotation { get; set; } = 0;
-
-    public FlipMode FlipDisplay { get; set; } = FlipMode.Normal;
-
-    public NavigationMode Direction { get; set; } = NavigationMode.LeftToRight;
-
-    public ScrollBarMode Scrollbars {get;set;} = ScrollBarMode.Visible;
-    public ScaleMode Scale {get;set;} = ScaleMode.Best;
-
-
 
     private int _currentPage = 0;
     public int CurrentPage
@@ -54,6 +41,7 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
             {
                 _currentPage = value;
                 Task.Run(async () => await LoadAtPosition());
+                SaveBookmark?.Invoke(value.ToString());
                 CurrentPageChanged?.Invoke();
             }
         }
@@ -68,6 +56,8 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
         Title = meta.Title ?? string.Empty;
         Pages = meta.Pages.Select(p => new Page(p)).ToList();
         RecalculatePageNumbers();
+
+        Settings.SettingsChanged += HandleSettingsChange;
     }
 
     public async Task InitInteropAsync()
@@ -76,6 +66,26 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
         interopService.OnKeyDown += KeyDown;
         await interopService.Init();
 
+    }
+
+    public async Task InitSettings()
+    {
+        var settings = await localStorage.GetItemAsync<SettingsModel>("ComicsBlazor.Settings");
+        if (settings != null)
+        {
+            this.Settings.Background = settings.Background;
+            this.Settings.BackgroundColor = settings.BackgroundColor;
+            this.Settings.CreaseShadow = settings.CreaseShadow;
+            this.Settings.Direction = settings.Direction;
+            this.Settings.DisplayMode = settings.DisplayMode;
+            this.Settings.DisplayRotation = settings.DisplayRotation;
+            this.Settings.FlipDisplay = settings.FlipDisplay;
+            this.Settings.PreloadAfter = settings.PreloadAfter;
+            this.Settings.PreloadBefore = settings.PreloadBefore;
+            this.Settings.Scale = settings.Scale;
+            this.Settings.Scrollbars = settings.Scrollbars;
+            this.Settings.Theme = settings.Theme;
+        }
     }
 
     private void KeyDown(string key)
@@ -87,73 +97,87 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
 
         if (key == "r")
         {
-            DisplayRotation += 90;
-            if (DisplayRotation == 360) DisplayRotation = 0;
-            DisplayModeChanged?.Invoke();
+            Settings.DisplayRotation = Settings.DisplayRotation.Next();
         }
 
         if (key == "l")
         {
-            DisplayRotation -= 90;
-            if (DisplayRotation == -90) DisplayRotation = 270;
-            DisplayModeChanged?.Invoke();
-
+            Settings.DisplayRotation = Settings.DisplayRotation.Prev();
         }
 
         if (key == "f")
         {
-            FlipDisplay = FlipDisplay.Next();
-            DisplayModeChanged?.Invoke();
+            Settings.FlipDisplay = Settings.FlipDisplay.Next();
         }
 
         if (key == "d")
         {
-            Direction = Direction.Next();
-            Console.WriteLine($"New Direction: {Direction}");
-        }
-        
-        if (key == "1")
-        {
-            DisplayMode = DisplayMode.SinglePage;
-            DisplayModeChanged?.Invoke();
-        }
-        
-        if (key == "2")
-        {
-            DisplayMode = DisplayMode.DoublePage;
-            DisplayModeChanged?.Invoke();
-        }
-        
-        if (key == "s")
-        {
-            Scrollbars = Scrollbars.Next();
-            DisplayModeChanged?.Invoke();
-        }
-        
-        if (key == "b")
-        {
-            Scale = ScaleMode.Best;
-            DisplayModeChanged?.Invoke();
-        }
-        
-        if (key == "w")
-        {
-            Scale = ScaleMode.Width;
-            DisplayModeChanged?.Invoke();
-        }
-          
-        if (key == "h")
-        {
-            Scale = ScaleMode.Height;
-            DisplayModeChanged?.Invoke();
-        }
-        
-        if (key == "n")
-        {
-            Scale = ScaleMode.Native;
-            DisplayModeChanged?.Invoke();
+            Settings.Direction = Settings.Direction.Next();
         }
 
+        if (key == "1")
+        {
+            Settings.DisplayMode = DisplayMode.SinglePage;
+        }
+
+        if (key == "2")
+        {
+            Settings.DisplayMode = DisplayMode.DoublePage;
+        }
+
+        if (key == "s")
+        {
+            Settings.Scrollbars = Settings.Scrollbars.Next();
+        }
+
+        if (key == "b")
+        {
+            Settings.Scale = ScaleMode.Best;
+        }
+
+        if (key == "w")
+        {
+            Settings.Scale = ScaleMode.Width;
+        }
+
+        if (key == "h")
+        {
+            Settings.Scale = ScaleMode.Height;
+        }
+
+        if (key == "n")
+        {
+            Settings.Scale = ScaleMode.Native;
+        }
+
+    }
+
+    private async void HandleSettingsChange(string settingName)
+    {
+        if (settingName == nameof(Settings.DisplayMode) ||
+        settingName == nameof(Settings.DisplayRotation) ||
+        settingName == nameof(Settings.FlipDisplay) ||
+        settingName == nameof(Settings.Scrollbars) ||
+        settingName == nameof(Settings.Scale) ||
+        settingName == nameof(Settings.Background) ||
+        settingName == nameof(Settings.BackgroundColor) ||
+        settingName == nameof(Settings.CreaseShadow)
+        )
+        {
+            DisplayModeChanged?.Invoke();
+        }
+        if (settingName == nameof(Settings.Direction)
+           )
+        {
+            SettingsChanged?.Invoke();
+        }
+        if (settingName == nameof(Settings.Theme)
+           )
+        {
+            ThemeChanged?.Invoke();
+        }
+
+        await localStorage.SetItemAsync("ComicsBlazor.Settings", Settings);
     }
 
     private void WindowResized(Size size)
@@ -172,9 +196,9 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
         }
 
 
-        if (_forcedDisplayMode != calculatedDisplayMode)
+        if (Settings._forcedDisplayMode != calculatedDisplayMode)
         {
-            if (calculatedDisplayMode == null && _chosenDisplayMode == DisplayMode.DoublePage) // double page
+            if (calculatedDisplayMode == null && Settings._chosenDisplayMode == DisplayMode.DoublePage) // double page
             {
                 // move to odd page
                 if (Pages[CurrentPage].RealPageNumber % 2 == 0 && CurrentPage > 0)
@@ -183,9 +207,9 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
                 }
             }
 
-            _forcedDisplayMode = calculatedDisplayMode;
+            Settings._forcedDisplayMode = calculatedDisplayMode;
 
-            Console.WriteLine($"New Display mode : {DisplayMode}");
+            Console.WriteLine($"New Display mode : {Settings.DisplayMode}");
             DisplayModeChanged?.Invoke();
         }
     }
@@ -288,27 +312,30 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
     {
         Console.WriteLine($"load at position {CurrentPage}");
 
+        // load current page
         if (CurrentPage < Pages.Count && Pages[CurrentPage].BlobUri == null)
             await this.LoadPage(CurrentPage);
-        if (CurrentPage + 1 < Pages.Count && Pages[CurrentPage + 1].BlobUri == null)
-            await this.LoadPage(CurrentPage + 1);
-        if (CurrentPage - 1 >= 0 && Pages[CurrentPage - 1].BlobUri == null)
-            await this.LoadPage(CurrentPage - 1);
+
+        if (Settings.PreloadAfter >= 1)
+            if (CurrentPage + 1 < Pages.Count && Pages[CurrentPage + 1].BlobUri == null)
+                await this.LoadPage(CurrentPage + 1);
+        if (Settings.PreloadBefore >= 1)
+            if (CurrentPage - 1 >= 0 && Pages[CurrentPage - 1].BlobUri == null)
+                await this.LoadPage(CurrentPage - 1);
 
         // prev/next 2 pages loaded, we can display
         CurrentPageChanged?.Invoke();
 
         // continue loading the rest
-        if (CurrentPage + 2 < Pages.Count && Pages[CurrentPage + 2].BlobUri == null)
-            await this.LoadPage(CurrentPage + 2);
-        if (CurrentPage - 2 >= 0 && Pages[CurrentPage - 2].BlobUri == null)
-            await this.LoadPage(CurrentPage - 2);
-        if (DisplayMode == DisplayMode.DoublePage)
+        for (int i = 2; i <= Settings.PreloadAfter; i++)
         {
-            // load 1 more page
-            if (CurrentPage + 3 < Pages.Count && Pages[CurrentPage + 3].BlobUri == null)
-                await this.LoadPage(CurrentPage + 3);
-
+            if (CurrentPage + i < Pages.Count && Pages[CurrentPage + i].BlobUri == null)
+                await this.LoadPage(CurrentPage + i);
+        }
+        for (int i = 2; i <= Settings.PreloadBefore; i++)
+        {
+            if (CurrentPage - i >= 0 && Pages[CurrentPage - i].BlobUri == null)
+                await this.LoadPage(CurrentPage - i);
         }
     }
 
@@ -317,7 +344,7 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
         var plannedPage = Pages.FindIndex(p => p.PageNumber == page.PageNumber);
 
 
-        if (this.DisplayMode == DisplayMode.DoublePage)
+        if (Settings.DisplayMode == DisplayMode.DoublePage)
         {
             // move to odd page
             if (page.RealPageNumber % 2 == 0 && plannedPage > 0)
@@ -333,7 +360,7 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
 
     public bool CanViewRightPage()
     {
-        if (this.DisplayMode == DisplayMode.DoublePage && this.CurrentPage + 1 < this.Pages.Count &&
+        if (Settings.DisplayMode == DisplayMode.DoublePage && this.CurrentPage + 1 < this.Pages.Count &&
        !(this.Pages[this.CurrentPage].DoublePage ||
        this.Pages[this.CurrentPage].PageType == PageType.FrontCover ||
         this.Pages[this.CurrentPage + 1].DoublePage))
@@ -343,13 +370,13 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
 
     public void MoveNext(bool forced = false)
     {
-        if (Direction == NavigationMode.RightToLeft && !forced)
+        if (Settings.Direction == NavigationMode.RightToLeft && !forced)
         {
             MoveBack(true);
             return;
         }
 
-        if (DisplayMode == DisplayMode.DoublePage)
+        if (Settings.DisplayMode == DisplayMode.DoublePage)
         {
             if (CurrentPage + 1 >= Pages.Count)
                 return;
@@ -376,13 +403,13 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
 
     public void MoveBack(bool forced = false)
     {
-        if (Direction == NavigationMode.RightToLeft && !forced)
+        if (Settings.Direction == NavigationMode.RightToLeft && !forced)
         {
             MoveNext(true);
             return;
         }
 
-        if (DisplayMode == DisplayMode.DoublePage)
+        if (Settings.DisplayMode == DisplayMode.DoublePage)
         {
             if (CurrentPage - 1 < 0)
                 return;
@@ -454,47 +481,3 @@ public class Page : ComicMetadata.PageInfo
     public string ColorRight { get; internal set; }
 }
 
-public enum DisplayMode
-{
-    DoublePage,
-    SinglePage
-}
-
-public enum FlipMode
-{
-    Normal = 0,
-    Vertical = 1,
-    Horizontal = 2,
-    VerticalHorizontal = 3
-}
-
-public enum NavigationMode
-{
-    LeftToRight,
-    RightToLeft
-}
-
-public enum ScaleMode{
-    Best,
-    Width,
-    Height,
-    Native
-}
-
-public enum ScrollBarMode{
-    Visible, 
-    Hidden
-}
-
-public static class Extensions
-{
-
-    public static T Next<T>(this T src) where T : struct
-    {
-        if (!typeof(T).IsEnum) throw new ArgumentException(String.Format("Argument {0} is not an Enum", typeof(T).FullName));
-
-        T[] Arr = (T[])Enum.GetValues(src.GetType());
-        int j = Array.IndexOf<T>(Arr, src) + 1;
-        return (Arr.Length == j) ? Arr[0] : Arr[j];
-    }
-}

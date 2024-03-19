@@ -4,6 +4,7 @@
     <div class="title noto-sans">
         @ComicService.Title
     </div>
+    <div class="settings-icon" @onclick="OpenSettings"></div>
 </div>
 
 @code {
@@ -18,5 +19,11 @@
     {
         SidebarIcon = SidebarIcon == "sidebar-close-icon" ? "sidebar-open-icon" : "sidebar-close-icon";
         @* StateHasChanged(); *@
+    }
+
+    private void OpenSettings()
+    {
+        Console.WriteLine("toggle settings");
+        ComicService.ToggleSettings?.Invoke();
     }
 }

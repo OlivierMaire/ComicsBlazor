@@ -3,15 +3,20 @@
 @using ComicsBlazor.Components
 @using Microsoft.AspNetCore.Components.Web
 
-<div class="d-flex flex-row">
-<SidePanel />
-<div class="flex-grow-1 main-view" >
-    
-<Progress />
-<Title />
-<PageView />
+<div class="comics-blazor-view @ComicService.Settings.ThemeClass">
+    <SidePanel />
+    <div class="flex-grow-1 main-view">
 
-</div>
+        <Progress />
+        <Title />
+        <PageView />
+
+    </div>
+
+    @if (DisplaySettings)
+    {
+        <Settings />
+    }
 </div>
 
 
@@ -27,16 +32,21 @@
     [Parameter] public string Url { get; set; } = string.Empty;
     [Parameter] public string? Name { get; set; } = string.Empty;
     [Parameter] public ComicMetadata Metadata { get; set; } = null!;
-
     [Parameter] public Func<int, Task<PageData?>> GetPage { get; set; } = null!;
 
+    [Parameter] public Action<string>? SaveBookmark { get; set; } = null;
 
+
+    private bool DisplaySettings { get; set; } = false;
 
     private string BlobUrl = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         ComicService.GetPage = GetPage;
+        ComicService.SaveBookmark = SaveBookmark;
+        ComicService.ThemeChanged += () => StateHasChanged();
+        ComicService.ToggleSettings += () => { DisplaySettings = !DisplaySettings;StateHasChanged();};
         await ComicService.InitAsync(Metadata);
     }
 
@@ -44,11 +54,15 @@
     {
         if (firstRender)
         {
+            await ComicService.InitSettings();
             await ComicService.InitInteropAsync();
             Console.WriteLine("Comics Loaded");
-            ComicService.CurrentPage = 9;
-
-
+            ComicService.CurrentPage = Metadata.LastReadPosition ?? 0;
+            if (ComicService.CurrentPage == 0)
+            {
+                // need to force the rendering
+                await ComicService.LoadAtPosition();
+            }
         }
     }
 

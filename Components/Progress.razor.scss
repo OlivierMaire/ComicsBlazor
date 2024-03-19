@@ -6,9 +6,9 @@
     .page {
         opacity: .5;
         width: 100%;
-        background-color: rgb(118,106,231);
+        background-color: var(--purple-bright-highlight);
         &.loaded{
-            background-color: rgba(89,74,226,1);
+            background-color: var(--purple-extrabright);
             opacity: .6;
         }
         &:hover{

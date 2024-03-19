@@ -12,6 +12,7 @@
         opacity: 0;
         transition: opacity linear .6s;
         cursor: pointer;
+        z-index: 2;
 
         &:before {
 

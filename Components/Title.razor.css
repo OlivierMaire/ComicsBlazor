@@ -2,15 +2,16 @@
   display: flex;
   background-color: var(--bg-panel);
 }
-.title-wrap .sidebar-open-icon, .title-wrap .sidebar-close-icon {
+.title-wrap .sidebar-open-icon, .title-wrap .sidebar-close-icon, .title-wrap .settings-icon {
   width: 20px;
   height: 16px;
   margin-right: 4px;
   padding-left: 4px;
   opacity: 0.6;
   transition: opacity linear 0.2s;
+  cursor: pointer;
 }
-.title-wrap .sidebar-open-icon:hover, .title-wrap .sidebar-close-icon:hover {
+.title-wrap .sidebar-open-icon:hover, .title-wrap .sidebar-close-icon:hover, .title-wrap .settings-icon:hover {
   opacity: 1;
 }
 .title-wrap .title {

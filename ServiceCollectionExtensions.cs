@@ -1,3 +1,4 @@
+using Blazored.LocalStorage;
 using ComicsBlazor.Services;
 using Microsoft.Extensions.DependencyInjection;
 using SoloX.BlazorJsBlob;
@@ -42,6 +43,7 @@ public static partial class ServiceCollectionExtensions
                 services.AddSingleton<BlobManagerService>();
                 services.AddSingleton<ComicService>();
                 services.AddSingleton<ComicsJsInterop>();
+                services.AddBlazoredLocalStorageAsSingleton();
                 // services.AddSingleton<EPubNavigationService>();
                 // services.AddSingleton<EPubSettingsService>();
                 // services.AddSingleton<EPubThemeService>();
@@ -50,6 +52,8 @@ public static partial class ServiceCollectionExtensions
                 services.AddScoped<BlobManagerService>();
                 services.AddScoped<ComicService>();
                 services.AddScoped<ComicsJsInterop>();
+                services.AddBlazoredLocalStorage();
+
                 // services.AddScoped<EPubNavigationService>();
                 // services.AddScoped<EPubSettingsService>();
                 // services.AddScoped<EPubThemeService>();
@@ -59,6 +63,8 @@ public static partial class ServiceCollectionExtensions
                 services.AddTransient<BlobManagerService>();
                 services.AddTransient<ComicService>();
                 services.AddTransient<ComicsJsInterop>();
+                services.AddBlazoredLocalStorage();
+
                 // services.AddTransient<EPubNavigationService>();
                 // services.AddTransient<EPubSettingsService>();
                 // services.AddTransient<EPubThemeService>();

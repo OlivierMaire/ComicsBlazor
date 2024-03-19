@@ -11,6 +11,7 @@
   opacity: 0;
   transition: opacity linear 0.6s;
   cursor: pointer;
+  z-index: 2;
 }
 .page-view .left-icon:before,
 .page-view .right-icon:before {
