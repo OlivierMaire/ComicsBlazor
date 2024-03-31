@@ -27,6 +27,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.3" />
     <PackageReference Include="Macross.Json.Extensions" Version="3.0.0" />
     <PackageReference Include="SkiaSharp" Version="2.88.7" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.7" />
     <PackageReference Include="SkiaSharp.Views.Blazor" Version="2.88.7" />
     <PackageReference Include="SoloX.BlazorJsBlob" Version="1.0.2" />
   </ItemGroup>
