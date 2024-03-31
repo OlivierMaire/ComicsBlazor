@@ -227,17 +227,26 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
                 IBlob blob = await blobManagerService.AddBlobAsync(page.Key, pageData.Data, pageData.ContentType);
 
                 page.BlobUri = blob.Uri;
-                using (SKBitmap sourceBitmap = SKBitmap.Decode(pageData.Data))
+                try
                 {
-                    page.ImageWidth = (uint)sourceBitmap.Width;
-                    page.ImageHeight = (uint)sourceBitmap.Height;
-                    page.DoublePage = page.ImageWidth > page.ImageHeight;
+                    using (SKBitmap sourceBitmap = SKBitmap.Decode(pageData.Data))
+                    {
+                        page.ImageWidth = (uint)sourceBitmap.Width;
+                        page.ImageHeight = (uint)sourceBitmap.Height;
+                        page.DoublePage = page.ImageWidth > page.ImageHeight;
 
-                    (page.ColorLeft, page.ColorRight) = GetMainColorFromLeftStrip(sourceBitmap);
+                        (page.ColorLeft, page.ColorRight) = GetMainColorFromLeftStrip(sourceBitmap);
 
-                    if (page.DoublePage)
-                        RecalculatePageNumbers();
+                        if (page.DoublePage)
+                            RecalculatePageNumbers();
+                    }
                 }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+
+
                 PagesChanged?.Invoke();
                 return page;
             }
