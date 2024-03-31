@@ -1,6 +1,7 @@
 using System.Drawing;
 using System.Dynamic;
 using ComicsBlazor.Components;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualBasic;
 using SkiaSharp;
 using SoloX.BlazorJsBlob;
@@ -9,11 +10,12 @@ namespace ComicsBlazor.Services;
 
 
 
-public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop interopService, Blazored.LocalStorage.ILocalStorageService localStorage)
+public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop interopService, Blazored.LocalStorage.ILocalStorageService localStorage, ILogger<ComicService> logger)
 {
     private readonly BlobManagerService blobManagerService = blobManagerService;
     private readonly ComicsJsInterop interopService = interopService;
     private readonly Blazored.LocalStorage.ILocalStorageService localStorage = localStorage;
+    private readonly ILogger<ComicService> _logger = logger;
 
     public Func<int, Task<PageData?>>? GetPage { private get; set; } = null;
     public Action<string>? SaveBookmark { private get; set; } = null;
@@ -243,6 +245,9 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
                 }
                 catch (Exception ex)
                 {
+                    _logger.LogCritical("SKIA ERROR");
+                    _logger.LogCritical(ex, " Got exception");
+                    _logger.LogCritical(ex.Message);
                     Console.WriteLine(ex.Message);
                 }
 
