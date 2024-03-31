@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
 
-        <PackageId>AudioPlayerBlazor</PackageId>
+    <PackageId>ComicsBlazor</PackageId>
     <!-- <Version>0.0.2-alpha</Version> -->
     <Authors>Olivier Maire</Authors>
     <Company>Olivier Maire</Company>
