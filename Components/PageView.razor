@@ -62,7 +62,7 @@
             LeftColor = $"linear-gradient(90deg, {LeftPage?.ColorLeft} , {LeftPage?.ColorRight})";
         }
 
-        StateHasChanged();
+        this.InvokeAsync(() => this.StateHasChanged());
     }
 
 

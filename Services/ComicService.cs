@@ -3,8 +3,10 @@ using System.Dynamic;
 using ComicsBlazor.Components;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualBasic;
-using SkiaSharp;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using SoloX.BlazorJsBlob;
+using Size = System.Drawing.Size;
 
 namespace ComicsBlazor.Services;
 
@@ -229,30 +231,38 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
                 IBlob blob = await blobManagerService.AddBlobAsync(page.Key, pageData.Data, pageData.ContentType);
 
                 page.BlobUri = blob.Uri;
+
                 try
                 {
-                    using (SKBitmap sourceBitmap = SKBitmap.Decode(pageData.Data))
-                    {
-                        page.ImageWidth = (uint)sourceBitmap.Width;
-                        page.ImageHeight = (uint)sourceBitmap.Height;
-                        page.DoublePage = page.ImageWidth > page.ImageHeight;
+                    _logger.LogCritical("IMAGESHARP HERE");
 
-                        (page.ColorLeft, page.ColorRight) = GetMainColorFromLeftStrip(sourceBitmap);
+                    using (Image<Rgba32> image = Image.Load<Rgba32>(pageData.Data))
+                    {
+                        _logger.LogCritical("IMAGESHARP HERE1");
+                        page.ImageWidth = (uint)image.Width;
+                        page.ImageHeight = (uint)image.Height;
+                        page.DoublePage = page.ImageWidth > page.ImageHeight;
+                        _logger.LogCritical("IMAGESHARP HERE2");
+
+                        (page.ColorLeft, page.ColorRight) = GetMainColorFromLeftStrip(image);
+                        _logger.LogCritical($"{page.ColorLeft} {page.ColorRight}");
+                        _logger.LogCritical("IMAGESHARP HERE3");
 
                         if (page.DoublePage)
                             RecalculatePageNumbers();
+
+                        _logger.LogCritical("IMAGESHARP OUT");
+
                     }
+                    PagesChanged?.Invoke();
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogCritical("SKIA ERROR");
-                    _logger.LogCritical(ex, " Got exception");
-                    _logger.LogCritical(ex.Message);
-                    Console.WriteLine(ex.Message);
+                    _logger.LogCritical("IMAGESHARP EXCEPTION");
+                    _logger.LogCritical(ex, "IMAGESHARP EXCEPTION");
+
                 }
 
-
-                PagesChanged?.Invoke();
                 return page;
             }
         }
@@ -263,17 +273,17 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
         return page;
     }
 
-    private (string, string) GetMainColorFromLeftStrip(SKBitmap bitmap)
+    private (string, string) GetMainColorFromLeftStrip(Image<Rgba32> image)
     {
-        Dictionary<SKColor, int> colorOccurrencesLeft = new Dictionary<SKColor, int>();
-        Dictionary<SKColor, int> colorOccurrencesRight = new Dictionary<SKColor, int>();
+        Dictionary<Rgba32, int> colorOccurrencesLeft = new Dictionary<Rgba32, int>();
+        Dictionary<Rgba32, int> colorOccurrencesRight = new Dictionary<Rgba32, int>();
 
         // Loop through the first 10 pixels from the left side of the image
-        for (int y = 0; y < bitmap.Height; y++)
+        for (int y = 0; y < image.Height; y++)
         {
             for (int x = 0; x < 10; x++)
             {
-                SKColor currentColor = bitmap.GetPixel(x, y);
+                var currentColor = image[x, y];
 
                 if (colorOccurrencesLeft.ContainsKey(currentColor))
                 {
@@ -285,9 +295,9 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
                 }
             }
 
-            for (int x = bitmap.Width - 1; x >= bitmap.Width - 10; x--)
+            for (int x = image.Width - 1; x >= image.Width - 10; x--)
             {
-                SKColor currentColor = bitmap.GetPixel(x, y);
+                var currentColor = image[x, y];
 
                 if (colorOccurrencesRight.ContainsKey(currentColor))
                 {
@@ -304,7 +314,7 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
         var mainColorLeft = colorOccurrencesLeft.OrderByDescending(c => c.Value).First().Key;
         var mainColorRight = colorOccurrencesRight.OrderByDescending(c => c.Value).First().Key;
 
-        return ($"#{mainColorLeft.Red:X2}{mainColorLeft.Green:X2}{mainColorLeft.Blue:X2}", $"#{mainColorRight.Red:X2}{mainColorRight.Green:X2}{mainColorRight.Blue:X2}");
+        return ($"#{mainColorLeft.R:X2}{mainColorLeft.G:X2}{mainColorLeft.B:X2}", $"#{mainColorRight.R:X2}{mainColorRight.G:X2}{mainColorRight.B:X2}");
     }
 
     private void RecalculatePageNumbers()

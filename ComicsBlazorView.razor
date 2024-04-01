@@ -45,7 +45,7 @@
     {
         ComicService.GetPage = GetPage;
         ComicService.SaveBookmark = SaveBookmark;
-        ComicService.ThemeChanged += () => StateHasChanged();
+        ComicService.ThemeChanged += () => this.InvokeAsync(() => this.StateHasChanged());
         ComicService.ToggleSettings += () => { DisplaySettings = !DisplaySettings;StateHasChanged();};
         ComicService.Init(Metadata);
     }
