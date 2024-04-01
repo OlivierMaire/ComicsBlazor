@@ -1,0 +1,16 @@
+.page-count{
+    z-index: 2;
+    background-color: black;
+    opacity: .8;
+    padding: 1rem;
+    border-radius: .5rem;
+
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+
+    transition: opacity .5s ease-in ;
+    &.fade{
+        opacity: 0;
+    }
+}
