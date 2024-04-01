@@ -1,3 +1,4 @@
+using System.Drawing;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 
@@ -149,4 +150,8 @@ public enum AgeRating
     X18,
 }
 
-public record PageData (byte[] Data, string ContentType);
+public record PageData (byte[] Data, string ContentType, Size? ImageSize, string? LeftColor, string? RightColor)
+{
+    public PageData(byte[] Data, string ContentType) : this(Data, ContentType, null, null, null) {}
+}
+ 
