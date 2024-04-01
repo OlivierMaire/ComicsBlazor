@@ -16,7 +16,7 @@
     <RepositoryUrl>https://github.com/OlivierMaire/ComicsBlazor.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
 
-    <!-- <WasmBuildNative>true</WasmBuildNative> -->
+    <WasmBuildNative>true</WasmBuildNative>
   </PropertyGroup>
 
 
