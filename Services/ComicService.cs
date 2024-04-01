@@ -1,19 +1,20 @@
 using System.Drawing;
 using System.Dynamic;
 using ComicsBlazor.Components;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualBasic;
-using SkiaSharp;
 using SoloX.BlazorJsBlob;
 
 namespace ComicsBlazor.Services;
 
 
 
-public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop interopService, Blazored.LocalStorage.ILocalStorageService localStorage)
+public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop interopService, Blazored.LocalStorage.ILocalStorageService localStorage, ILogger<ComicService> logger)
 {
     private readonly BlobManagerService blobManagerService = blobManagerService;
     private readonly ComicsJsInterop interopService = interopService;
     private readonly Blazored.LocalStorage.ILocalStorageService localStorage = localStorage;
+    private readonly ILogger<ComicService> _logger = logger;
 
     public Func<int, Task<PageData?>>? GetPage { private get; set; } = null;
     public Action<string>? SaveBookmark { private get; set; } = null;
@@ -227,18 +228,29 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
                 IBlob blob = await blobManagerService.AddBlobAsync(page.Key, pageData.Data, pageData.ContentType);
 
                 page.BlobUri = blob.Uri;
-                using (SKBitmap sourceBitmap = SKBitmap.Decode(pageData.Data))
+                if (pageData.ImageSize.HasValue)
                 {
-                    page.ImageWidth = (uint)sourceBitmap.Width;
-                    page.ImageHeight = (uint)sourceBitmap.Height;
+                    page.ImageWidth = (uint)pageData.ImageSize.Value.Width;
+                    page.ImageHeight = (uint)pageData.ImageSize.Value.Height;
                     page.DoublePage = page.ImageWidth > page.ImageHeight;
 
-                    (page.ColorLeft, page.ColorRight) = GetMainColorFromLeftStrip(sourceBitmap);
-
-                    if (page.DoublePage)
-                        RecalculatePageNumbers();
                 }
+
+                if (!string.IsNullOrEmpty(pageData.LeftColor))
+                {
+                    page.ColorLeft = pageData.LeftColor;
+                }
+
+                if (!string.IsNullOrEmpty(pageData.RightColor))
+                {
+                    page.ColorRight = pageData.RightColor;
+                }
+
+                if (page.DoublePage)
+                    RecalculatePageNumbers();
+ 
                 PagesChanged?.Invoke();
+                
                 return page;
             }
         }
@@ -247,50 +259,6 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
             Console.WriteLine("GetPage function not provided");
         }
         return page;
-    }
-
-    private (string, string) GetMainColorFromLeftStrip(SKBitmap bitmap)
-    {
-        Dictionary<SKColor, int> colorOccurrencesLeft = new Dictionary<SKColor, int>();
-        Dictionary<SKColor, int> colorOccurrencesRight = new Dictionary<SKColor, int>();
-
-        // Loop through the first 10 pixels from the left side of the image
-        for (int y = 0; y < bitmap.Height; y++)
-        {
-            for (int x = 0; x < 10; x++)
-            {
-                SKColor currentColor = bitmap.GetPixel(x, y);
-
-                if (colorOccurrencesLeft.ContainsKey(currentColor))
-                {
-                    colorOccurrencesLeft[currentColor]++;
-                }
-                else
-                {
-                    colorOccurrencesLeft[currentColor] = 1;
-                }
-            }
-
-            for (int x = bitmap.Width - 1; x >= bitmap.Width - 10; x--)
-            {
-                SKColor currentColor = bitmap.GetPixel(x, y);
-
-                if (colorOccurrencesRight.ContainsKey(currentColor))
-                {
-                    colorOccurrencesRight[currentColor]++;
-                }
-                else
-                {
-                    colorOccurrencesRight[currentColor] = 1;
-                }
-            }
-        }
-
-        // Find the most frequent color
-        var mainColorLeft = colorOccurrencesLeft.OrderByDescending(c => c.Value).First().Key;
-        var mainColorRight = colorOccurrencesRight.OrderByDescending(c => c.Value).First().Key;
-
-        return ($"#{mainColorLeft.Red:X2}{mainColorLeft.Green:X2}{mainColorLeft.Blue:X2}", $"#{mainColorRight.Red:X2}{mainColorRight.Green:X2}{mainColorRight.Blue:X2}");
     }
 
     private void RecalculatePageNumbers()

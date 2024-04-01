@@ -13,6 +13,6 @@
 {
     protected override void OnInitialized()
     {
-        ComicService.PagesChanged += () => StateHasChanged();
+        ComicService.PagesChanged += () => this.InvokeAsync(() => this.StateHasChanged());
     }
 }

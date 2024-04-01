@@ -1,0 +1,45 @@
+@inject ComicService ComicService
+
+<div class="page-count noto-sans @FadeClass">
+    @PageNumber
+</div>
+
+@code {
+    private Timer? _timer = null;
+
+    private string FadeClass { get; set; } = string.Empty;
+    private string PageNumber { get; set; } = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        ComicService.CurrentPageChanged += () => StartTimer();
+    }
+    public void StartTimer()
+    {
+        FadeClass = string.Empty;
+
+        System.Text.StringBuilder pageNumber = new();
+        var LeftPage = ComicService.Pages[ComicService.CurrentPage];
+        pageNumber.Append(LeftPage.RealPageNumberString);
+
+        if (ComicService.CanViewRightPage())
+        {
+            var RightPage = ComicService.Pages[ComicService.CurrentPage + 1];
+            pageNumber.Append("-" + RightPage.RealPageNumberString);
+
+        }
+        pageNumber.Append(" / ");
+        var LastPage = ComicService.Pages.Last();
+        pageNumber.Append(LastPage.RealPageNumber);
+
+        PageNumber = pageNumber.ToString();
+
+        this.InvokeAsync(() => this.StateHasChanged());
+        _timer = new Timer(Fade, null, 3000, Timeout.Infinite);
+    }
+    public void Fade(object? state)
+    {
+        FadeClass = "fade";
+        this.InvokeAsync(() => this.StateHasChanged());
+    }
+}

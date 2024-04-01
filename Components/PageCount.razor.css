@@ -1,0 +1,14 @@
+.page-count {
+  z-index: 2;
+  background-color: black;
+  opacity: 0.8;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  transition: opacity 0.5s ease-in;
+}
+.page-count.fade {
+  opacity: 0;
+}
