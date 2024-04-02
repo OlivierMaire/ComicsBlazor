@@ -267,7 +267,7 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
         foreach (var p in Pages)
         {
             p.RealPageNumber = i;
-            if (p.DoublePage)
+            if (p.DoublePage && p.RealPageNumber % 2 == 1)
                 i++;
             i++;
         }
@@ -376,7 +376,7 @@ public class ComicService(BlobManagerService blobManagerService, ComicsJsInterop
         {
             if (CurrentPage - 1 < 0)
                 return;
-            if (Pages[CurrentPage - 1].DoublePage || CurrentPage + 1 == Pages.Count /*last page*/)
+            if (Pages[CurrentPage - 1].DoublePage || CurrentPage + 1 == Pages.Count /*last page*/ || (Pages[CurrentPage ].DoublePage && Pages[CurrentPage - 1].RealPageNumber % 2 == 1))
             {
                 //stop here
                 CurrentPage = CurrentPage - 1;
