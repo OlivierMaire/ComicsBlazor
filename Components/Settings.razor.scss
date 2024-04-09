@@ -93,6 +93,13 @@
             }
         }
 
+        @media (max-width: 960px) {
+            flex-direction: column;
+            .separator, .settings-keymap{
+                display: none;
+            }
+
+        }
         .settings-inputs {
 
             max-width: 350px;

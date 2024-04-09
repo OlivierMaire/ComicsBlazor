@@ -70,6 +70,14 @@
 .settings-panel .settings-content .settings-keymap .keymap div:first-child span {
   display: block;
 }
+@media (max-width: 960px) {
+  .settings-panel .settings-content {
+    flex-direction: column;
+  }
+  .settings-panel .settings-content .separator, .settings-panel .settings-content .settings-keymap {
+    display: none;
+  }
+}
 .settings-panel .settings-content .settings-inputs {
   max-width: 350px;
 }
