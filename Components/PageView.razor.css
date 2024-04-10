@@ -65,7 +65,7 @@
 }
 .page-view .page-area .left-page img,
 .page-view .page-area .right-page img {
-  height: 100%;
+  max-height: 100%;
   max-width: 100%;
   -o-object-fit: contain;
      object-fit: contain;
@@ -139,6 +139,13 @@
 }
 .page-view.rotate-270.flip-VerticalHorizontal .page-area {
   transform: rotateZ(270deg) rotateX(180deg) rotateY(180deg);
+}
+.page-view.scale-Best .left-page, .page-view.scale-Best .right-page {
+  width: 100%;
+  height: calc(100svh - 20px);
+}
+.page-view.scale-Best .left-page img, .page-view.scale-Best .right-page img {
+  max-height: 100%;
 }
 .page-view.scale-Width .left-page, .page-view.scale-Width .right-page {
   width: 100%;
