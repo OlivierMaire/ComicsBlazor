@@ -172,8 +172,8 @@
 }
 
 .loading {
-  width: 100%;
-  padding-top: 100%;
+  width: min(100%, 300px);
+  padding-top: min(100%, 300px);
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
